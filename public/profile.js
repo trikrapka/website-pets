@@ -28,7 +28,6 @@ $(function() {
       method: 'GET',
       success: function(response) {
         if (response.success) {
-          // Update the user data fields
           $('#name').val(response.name);
           $('#breed').val(response.breed);
           $('#description').val(response.description);
