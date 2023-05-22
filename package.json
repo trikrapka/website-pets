@@ -1,0 +1,19 @@
+{
+  "name": "alex0",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "jquery": "^3.7.0",
+    "mongodb": "^5.5.0",
+    "pg": "^8.11.0"
+  },
+  "description": ""
+}
