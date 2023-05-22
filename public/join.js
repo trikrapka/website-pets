@@ -1,5 +1,5 @@
 
-$(function() {
+  $(function() {
     $(document).on('submit', 'form', function(event) {
       event.preventDefault();
 
@@ -30,7 +30,7 @@ $(function() {
           }
         },
         error: function() {
-          alert('Error occurred during sign-up');
+          alert('Error occurred during sign-up' );
         }
       });
     });
