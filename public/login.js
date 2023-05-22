@@ -1,7 +1,4 @@
-$(function(){
-    $("#navbar").load("navbar.html");
-});
-$('form').submit(function(event) {
+$(document).on('submit', 'form', function(event) {
   event.preventDefault();
 
   var email = $('input[name="email"]').val();
@@ -16,7 +13,7 @@ $('form').submit(function(event) {
     },
     success: function(response) {
       if (response.status === 200) {
-        window.location.href = 'profile.html';
+        window.location.href = '/public/profile.html';
       } else {
         alert('Invalid email or password');
       }
