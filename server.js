@@ -41,7 +41,6 @@ app.post('/signin', (req, res) => {
   }
 });
 // ...
-
 // Upload Picture
 app.post('/upload', (req, res) => {
     const imageFile = req.files.image;
