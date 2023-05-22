@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Page for posting photos</title>
+    <link rel="stylesheet" href="style.css"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        $(function(){
+            $("#navbar").load("navbar.html");
+        });
+    </script>
+</head>
+<body class="background, newform">
+    <div id="navbar"></div>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="imageInput" multiple>
+        <textarea id="captionInput" placeholder="Write a description"></textarea>
+        <button type="submit" class="btn-submit">Upload</button>
+      </form>
+      
+      <div id="imageContainer"></div>
+      
+</body>      
+<div id="navbar"></div>
