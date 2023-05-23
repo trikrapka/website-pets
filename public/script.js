@@ -37,7 +37,7 @@ $(function () {
 
   function loadGallery() {
     $.ajax({
-      url: 'http://localhost:3000/upload',
+      url: 'http://localhost:3000/gallery',
       method: 'GET',
       success: function (response) {
         var imageContainer = $('#imageContainer');
@@ -46,11 +46,11 @@ $(function () {
         galleryData.forEach(function (item) {
           var imageUrl = item.imageUrl;
           var description = item.description;
-
+  
           var image = $('<img>').attr('src', imageUrl);
-
+  
           var descParagraph = $('<p>').text(description);
-
+  
           imageContainer.append(image, descParagraph);
         });
       },
@@ -59,6 +59,7 @@ $(function () {
       }
     });
   }
+  
   
   function clearForm() {
     $("#imageInput").val("");
