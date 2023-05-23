@@ -5,8 +5,6 @@ const cors = require('cors');
 
 const app = express();
 const PORT = 3000;
-
-// MongoDB connection setup
 mongoose.connect('mongodb://localhost:27017/mydatabase', {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -17,7 +15,6 @@ db.once('open', () => {
   console.log('Connected to MongoDB');
 });
 
-// Create a user schema
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true },
   name: { type: String, required: true },
@@ -26,19 +23,14 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true }
 });
 
-// Create a user model
 const User = mongoose.model('User', userSchema);
-
-// Middleware setup
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json());
-app.use(cors()); // Enable CORS
+app.use(cors()); 
 
-// Signup route handler
 app.post('/signup', (req, res) => {
   const { username, name, breed, email, password, repeatPassword } = req.body;
 
-  // Perform server-side validation
   if (!username || !name || !breed || !email || !password || !repeatPassword) {
     return res.status(400).json({ status: 400, message: 'All fields are required' });
   }
@@ -47,7 +39,6 @@ app.post('/signup', (req, res) => {
     return res.status(400).json({ status: 400, message: 'Passwords do not match' });
   }
 
-  // Create a new user instance
   const newUser = new User({
     username,
     name,
@@ -56,7 +47,6 @@ app.post('/signup', (req, res) => {
     password
   });
 
-  // Save the user to the database
   newUser.save((error) => {
     if (error) {
       console.error('Error occurred while saving user:', error);
@@ -67,7 +57,6 @@ app.post('/signup', (req, res) => {
   });
 });
 
-// Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
