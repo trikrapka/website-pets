@@ -11,7 +11,7 @@
       var repeatPassword = $('input[name="repeatPassword"]').val();
 
       $.ajax({
-        url: '/signup',
+        url: 'http://localhost:3000/signup',
         method: 'POST',
         data: {
           username: username,
