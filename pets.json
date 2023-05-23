@@ -1,0 +1,121 @@
+[{
+  "_id": {
+    "$oid": "646c7930cce5116d142dd9a7"
+  },
+  "name": "Whiskers",
+  "breed": "Persian",
+  "email": "whiskers@example.com",
+  "gender": "Male",
+  "password": "mypassword",
+  "type": "Cat",
+  "description": "A calm and independent cat.",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "646c79bf235f9254b0fefc54"
+  },
+  "name": "Max",
+  "breed": "Labrador Retriever",
+  "email": "max@example.com",
+  "gender": "male",
+  "password": "mypassword",
+  "type": "Dog",
+  "description": "Friendly and active",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "646c79bf235f9254b0fefc55"
+  },
+  "name": "Bella",
+  "breed": "Poodle",
+  "email": "bella@example.com",
+  "gender": "female",
+  "password": "mypassword",
+  "type": "Dog",
+  "description": "Intelligent and hypoallergenic",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "646c79bf235f9254b0fefc56"
+  },
+  "name": "Charlie",
+  "breed": "Siamese",
+  "email": "charlie@example.com",
+  "gender": "male",
+  "password": "mypassword",
+  "type": "Cat",
+  "description": "Independent and vocal",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "646c79bf235f9254b0fefc57"
+  },
+  "name": "Lucy",
+  "breed": "Bulldog",
+  "email": "lucy@example.com",
+  "gender": "female",
+  "password": "mypassword",
+  "type": "Dog",
+  "description": "Loyal and affectionate",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "646c79bf235f9254b0fefc58"
+  },
+  "name": "Daisy",
+  "breed": "Persian",
+  "email": "daisy@example.com",
+  "gender": "female",
+  "password": "mypassword",
+  "type": "Cat",
+  "description": "Gentle and quiet",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "646c79bf235f9254b0fefc59"
+  },
+  "name": "Rocky",
+  "breed": "German Shepherd",
+  "email": "rocky@example.com",
+  "gender": "male",
+  "password": "mypassword",
+  "type": "Dog",
+  "description": "Protective and obedient",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "646c79bf235f9254b0fefc5a"
+  },
+  "name": "Lola",
+  "breed": "Sphynx",
+  "email": "lola@example.com",
+  "gender": "female",
+  "password": "mypassword",
+  "type": "cat",
+  "description": "Friendly and energetic",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "646c79bf235f9254b0fefc5b"
+  },
+  "name": "Bear",
+  "breed": "Golden Retriever",
+  "email": "bear@example.com",
+  "gender": "male",
+  "password": "mypassword",
+  "type": "dog",
+  "description": "Smart and loyal",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "646c79bf235f9254b0fefc5c"
+  },
+  "name": "Oscar",
+  "breed": "Maine Coon",
+  "email": "oscar@example.com",
+  "gender": "male",
+  "password": "mypassword",
+  "type": "cat",
+  "description": "Independent and intelligent",
+  "__v": 0
+}]

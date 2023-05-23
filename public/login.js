@@ -5,7 +5,7 @@ $(document).on('submit', 'form', function(event) {
   var password = $('input[name="password"]').val();
 
   $.ajax({
-    url: '/signin',
+    url: 'http://localhost:3000/signin',
     method: 'POST',
     data: {
       email: email,
