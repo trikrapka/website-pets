@@ -30,7 +30,7 @@
           }
         },
         error: function() {
-          alert('Error occurred during sign-up' );
+          alert('Error occurred while signing up');
         }
       });
     });
