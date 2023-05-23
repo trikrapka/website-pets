@@ -1,4 +1,5 @@
 $(function() {
+  $('#navbar').load('navbar.html');
   $.ajax({
     url: 'http://localhost:3000/profile',
     method: 'GET',
