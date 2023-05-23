@@ -22,4 +22,5 @@ $(document).on('submit', 'form', function(event) {
       alert('Error occurred during login');
     }
   });
+
 });

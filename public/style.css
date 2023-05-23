@@ -108,6 +108,20 @@ button.btn {
     color: #000;
     background-color: #97bece;
 }
+
+button.signasadmin {
+    display: block;
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 20px;
+    margin-top: 50px;
+    border: 0;
+    cursor: pointer;
+    font-family: 'Lobster', cursive;
+    font-size: 16px;
+    color: #000;
+    background-color: #97bece;
+}
 button.btn-header {
     display: block;
     width: 100%;
@@ -334,3 +348,5 @@ button.btn-submit {
     font-size: 16px;
     background-color: #97bece;
   }
+
+  
