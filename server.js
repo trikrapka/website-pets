@@ -79,7 +79,6 @@ app.post('/signin', async (req, res) => {
 
 
 app.get('/profile', (req, res) => {
-  // Retrieve user data from the database
   User.findOne({})
     .then(userData => {
       res.json(userData);
@@ -93,7 +92,6 @@ app.get('/profile', (req, res) => {
 app.post('/profile', (req, res) => {
   const { name, breed, description } = req.body;
 
-  // Update user data in the database
   User.findOneAndUpdate({}, { name, breed, description })
     .then(() => {
       res.status(200).json({ status: 200, message: 'User data saved successfully' });
@@ -105,10 +103,7 @@ app.post('/profile', (req, res) => {
 });
 
 app.post('/avatar', (req, res) => {
-  // Save avatar logic
-  // You need to implement this part based on your requirements for saving the avatar
-
-  // Assuming the avatar is saved successfully
+/// TODO: logic
   res.status(200).json({ status: 200, message: 'Avatar saved successfully' });
 });
 
