@@ -348,5 +348,13 @@ button.btn-submit {
     font-size: 16px;
     background-color: #97bece;
   }
-
+.avatar-preview {
+    display: block;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 100px;
+    margin-top: 20px;
+    margin-left: 45vw;
+}
   

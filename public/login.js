@@ -13,6 +13,7 @@ $(document).on('submit', 'form', function(event) {
     },
     success: function(response) {
       if (response.status === 200) {
+        localStorage.setItem('isLoggedIn', 'true'); // Set isLoggedIn to true
         window.location.href = '/public/profile.html';
       } else {
         alert('Invalid email or password');

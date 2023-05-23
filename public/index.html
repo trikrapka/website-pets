@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <title>My Index Page</title>
@@ -10,11 +11,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>
-        $(function(){
+        $(function () {
             $("#navbar").load("/public/navbar.html");
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                document.getElementById('newButton').disabled = false; // Enable the button
+            } else {
+                document.getElementById('newButton').disabled = true; // Disable the button
+            }
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                document.getElementById('profileButton').disabled = false; // Enable the button
+            } else {
+                document.getElementById('profileButton').disabled = true; // Disable the button
+            }
         });
     </script>
 </head>
+
 <body class="background">
     <div id="navbar"></div>
     <div class="container">
@@ -30,4 +42,5 @@
     </div>
 
 </body>
+
 </html>

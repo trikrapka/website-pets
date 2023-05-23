@@ -1,62 +1,66 @@
-const addPictureBtn = document.querySelector('.add-picture-btn');
-    const pictureInput = document.querySelector('#picture-input');
-    
-    addPictureBtn.addEventListener('click', () => {
-    pictureInput.click();
-    });
-    $(function(){
-        $("#navbar").load("navbar.html");
-    });
+const addBtnn = document.querySelector('.add-picture-btn');
+const pictureInput = document.querySelector('#picture-input');
 
-    document.getElementById('uploadForm').addEventListener('submit', function(event) {
-      event.preventDefault();
-    
-      var imageFile = document.getElementById('imageInput').files[0];
-      var description = document.getElementById('descriptionInput').value;
-    
-      var formData = new FormData();
-      formData.append('image', imageFile);
-      formData.append('description', description);
-    
-      fetch('/upload', {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          loadGallery();
-          alert('Picture uploaded successfully!');
-        } else {
-          alert('Upload failed. Please try again.');
-        }
-      })
-      .catch(error => {
-        alert('Upload failed. Please try again.');
-      });
-    });
-    
-    function loadGallery() {
-      const collection = db.collection('gallery');
-    
-      collection.find().toArray()
-        .then((data) => {
-          var gallery = document.getElementById('gallery');
-          gallery.innerHTML = '';
-    
-          data.forEach((item) => {
-            var image = document.createElement('img');
-            image.src = item.imageUrl;
-            gallery.appendChild(image);
-    
-            var description = document.createElement('p');
-            description.textContent = item.description;
-            gallery.appendChild(description);
-          });
-        })
-        .catch((error) => {
-          console.error('Error loading gallery:', error);
-        }); 
+addBtnn.addEventListener('click', () => {
+  pictureInput.click();
+});
+
+document.getElementById('uploadForm').addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  var imageFile = document.getElementById('imageInput').files[0];
+  var description = document.getElementById('captionInput').value;
+
+  var formData = new FormData();
+  formData.append('image', imageFile);
+  formData.append('description', description);
+
+  fetch('/upload', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      loadGallery();
+      alert('Picture uploaded successfully!');
+    } else {
+      alert('Upload failed. Please try again.');
     }
-    
-    loadGallery();
+  })
+  .catch(error => {
+    alert('Upload failed. Please try again.');
+  });
+});
+
+function loadGallery() {
+  const collection = db.collection('gallery');
+
+  collection
+    .find()
+    .toArray()
+    .then((data) => {
+      var imageContainer = document.getElementById('imageContainer');
+      imageContainer.innerHTML = '';
+
+      data.forEach((item) => {
+        var imageDiv = document.createElement('div');
+        imageDiv.classList.add('image-item');
+
+        var image = document.createElement('img');
+        image.src = item.imageUrl;
+        imageDiv.appendChild(image);
+
+        var description = document.createElement('p');
+        description.textContent = item.description;
+        imageDiv.appendChild(description);
+
+        imageContainer.appendChild(imageDiv);
+      });
+    })
+    .catch((error) => {
+      console.error('Error loading gallery:', error);
+    });
+}
+
+loadGallery();

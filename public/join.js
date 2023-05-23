@@ -24,6 +24,7 @@
         success: function(response) {
           if (response.status === 200) {
             alert('Sign-up successful');
+            localStorage.setItem('isLoggedIn', 'true'); // Set isLoggedIn to true
             window.location.href = '/public/profile.html';
           } else {
             alert('Sign-up failed: ' + response.message);

@@ -35,25 +35,50 @@ $(function() {
     });
   }
   function saveAvatar() {
-    var avatarFile = $('#avatar-input')[0].files[0];
+    var avatarFile = document.getElementById('avatar-input').files[0];
     var formData = new FormData();
     formData.append('avatar', avatarFile);
+  
+    var maxSize = 2 * 1024 * 1024; // 2MB
+    if (avatarFile.size > maxSize) {
+      alert('Error: Please upload an image smaller than 2MB.');
+      return;
+    }
 
-    $.ajax({
-      url: 'http://localhost:3000/avatar',
-      method: 'POST',
-      data: formData,
-      processData: false,
-      contentType: false,
-      success: function(response) {
-        alert('Avatar saved successfully');
-      },
-      error: function() {
-        alert('Error occurred while saving the avatar');
+    var maxDimension = 1024;
+    var image = new Image();
+    image.src = URL.createObjectURL(avatarFile);
+    image.onload = function() {
+      if (image.width > maxDimension || image.height > maxDimension) {
+        alert('Error: Please upload an image with dimensions not exceeding 1024x1024.');
+        return;
       }
-    });
-  }
+      var canvas = document.createElement('canvas');
+      canvas.width = 100;
+      canvas.height = 100;
 
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(image, 0, 0, 100, 100);
+  
+      var resizedAvatarDataUrl = canvas.toDataURL('image/jpeg');
+      document.getElementById('avatar-preview-image').src = resizedAvatarDataUrl;
+  
+      fetch('http://localhost:3000/avatars', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          alert('Avatar saved successfully');
+        })
+        .catch(error => {
+          alert('Error occurred while saving the avatar');
+        });
+    };
+  }
+  
+  
+  $(document).on('click', '#avatar-button', saveAvatar);
   $(document).on('click', '#name + .btn-2', saveUserData);
   $(document).on('click', '#breed + .btn-2', saveUserData);
   $(document).on('click', '#description + .btn-2', saveUserData);

@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
+const multer = require('multer');
+const session = require('express-session');
 
 const app = express();
 const PORT = 3000;
@@ -23,7 +25,9 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   breed: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true }
+  description: {type: String },
+  password: { type: String, required: true },
+  avatar: { type: String }
 });
 
 const User = mongoose.model('pets', userSchema);
@@ -31,7 +35,22 @@ const User = mongoose.model('pets', userSchema);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: false
+}));
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './uploads');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const upload = multer({ storage: storage });
 app.post('/signup', async (req, res) => {
   const { username, name, breed, email, password, repeatPassword } = req.body;
 
@@ -77,7 +96,6 @@ app.post('/signin', async (req, res) => {
   res.status(200).json({ status: 200, message: 'Login successful' });
 });
 
-
 app.get('/profile', (req, res) => {
   User.findOne({})
     .then(userData => {
@@ -102,11 +120,75 @@ app.post('/profile', (req, res) => {
     });
 });
 
-app.post('/avatar', (req, res) => {
-/// TODO: logic
-  res.status(200).json({ status: 200, message: 'Avatar saved successfully' });
+app.post('/avatars', upload.single('avatar'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).send('No file uploaded.');
+    }
+
+    const sharp = require('sharp');
+    const avatarFilePath = req.file.path;
+
+    const buffer = await sharp(avatarFilePath)
+      .resize(50, 50)
+      .toBuffer();
+
+    const fs = require('fs/promises');
+    const resizedAvatarFilePath = `./uploads/resized_${req.file.filename}`;
+
+    await fs.writeFile(resizedAvatarFilePath, buffer);
+
+    const avatarFileName = `resized_${req.file.filename}`;
+    const userEmail = req.body.email;
+
+    const updatedUser = await User.findOneAndUpdate(
+      { email: userEmail },
+      { avatar: avatarFileName },
+      { new: true }
+    );
+
+    req.session.body = updatedUser;
+
+    await fs.unlink(avatarFilePath);
+
+    res.status(200).send('Avatar saved successfully.');
+  } catch (error) {
+    console.error('Failed to upload avatar:', error);
+    res.status(500).send('Failed to upload avatar.');
+  }
+});
+app.get('/gallery', (req, res) => {
+  const collection = db.collection('gallery');
+
+  collection
+    .find()
+    .toArray()
+    .then((data) => {
+      res.json(data);
+    })
+    .catch((error) => {
+      console.error('Error loading gallery:', error);
+      res.status(500).json({ status: 500, message: 'Internal Server Error' });
+    });
 });
 
+app.post('/upload', upload.single('image'), (req, res) => {
+  const { description } = req.body;
+  const imagePath = req.file.path;
+  const imageUrl = '/uploads/' + req.file.filename;
+
+  const collection = db.collection('gallery');
+
+  collection
+    .insertOne({ imageUrl, description })
+    .then(() => {
+      res.json({ success: true });
+    })
+    .catch((error) => {
+      console.error('Error uploading image:', error);
+      res.json({ success: false });
+    });
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
