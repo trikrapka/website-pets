@@ -16,11 +16,13 @@
   <div class="row col-8"></div>
   <div class="text hi">Profile</div>
 
-  <button class="add-picture-btn">Add Avatar</button>
-  <input type="file" id="picture-input" accept="image/*" multiple style="display: none;"> 
+  <input type="file" id="avatar-input" accept="image/*">
+  <button class="btn-2 btn btn-primary" onclick="saveAvatar()">Save Avatar</button>
+  
   <div class="form-2">
     <h4>Name:</h4>
     <h4>Breed:</h4>
+    <h4>Description:</h4>
     <h4></h4>
   </div>
 
@@ -41,23 +43,8 @@
       <input class="input-2 mr-sm-2" type="text" id="password" placeholder="Change password">
       <button class="btn-2 btn btn-primary" onclick="saveUserData()">Change</button>
     </div>
-    <div class="form-inline">
-      <input class="input-2 mr-sm-2" type="text" id="links" placeholder="Add links">
-      <button class="btn-2 btn btn-primary" onclick="saveUserData()">Save</button>
-    </div>
   </form>
 
-  <script>
-    const addPictureBtn = document.querySelector('.add-picture-btn');
-    const pictureInput = document.querySelector('#picture-input');
 
-    addPictureBtn.addEventListener('click', () => {
-      pictureInput.click();
-    });
-
-    pictureInput.addEventListener('change', () => {
-      uploadAvatar();
-    });
-  </script>
 </body>
 </html>

@@ -4,93 +4,73 @@ $(function() {
     loadAvatar();
     loadUserData();
   });
-
-  function loadAvatar() {
+  $(document).ready(function() {
+    // Load user data on page load
     $.ajax({
-      url: '/avatar',
+      url: 'http://localhost:3000/profile',
       method: 'GET',
       success: function(response) {
-        if (response.success) {
-          $('#avatar-img').attr('src', response.avatarUrl);
-        } else {
-          console.log('Failed to load avatar:', response.error);
-        }
+        // Update the DOM with the user data
+        $('#name').val(response.name);
+        $('#breed').val(response.breed);
+        $('#description').val(response.description);
       },
       error: function() {
-        console.log('Error occurred while loading avatar');
+        alert('Error occurred while loading user data');
       }
     });
-  }
-
-  function loadUserData() {
-    $.ajax({
-      url: '/userdata',
-      method: 'GET',
-      success: function(response) {
-        if (response.success) {
-          $('#name').val(response.name);
-          $('#breed').val(response.breed);
-          $('#description').val(response.description);
-          $('#links').val(response.links.join(', '));
-        } else {
-          console.log('Failed to load user data:', response.error);
+  
+    // Save user data
+    function saveUserData() {
+      var name = $('#name').val();
+      var breed = $('#breed').val();
+      var description = $('#description').val();
+  
+      // Send the updated data to the server
+      $.ajax({
+        url: 'http://localhost:3000/profile',
+        method: 'POST',
+        data: {
+          name: name,
+          breed: breed,
+          description: description
+        },
+        success: function(response) {
+          alert('User data saved successfully');
+        },
+        error: function() {
+          alert('Error occurred while saving user data');
         }
-      },
-      error: function() {
-        console.log('Error occurred while loading user data');
-      }
-    });
-  }
+      });
+    }
+  // Function to save the avatar
+function saveAvatar() {
+  // Get the selected avatar file
+  var avatarFile = $('#avatar-input')[0].files[0];
 
-  function uploadAvatar() {
-    var avatarFile = $('#picture-input').prop('files')[0];
-    var formData = new FormData();
-    formData.append('avatar', avatarFile);
+  // Create a new FormData object
+  var formData = new FormData();
+  formData.append('avatar', avatarFile);
 
-    $.ajax({
-      url: '/uploadavatar',
-      method: 'POST',
-      data: formData,
-      processData: false,
-      contentType: false,
-      success: function(response) {
-        if (response.success) {
-          loadAvatar();
-          alert('Avatar uploaded successfully!');
-        } else {
-          alert('Failed to upload avatar');
-        }
-      },
-      error: function() {
-        alert('Error occurred during avatar upload');
-      }
-    });
-  }
+  // Send the avatar data to the server
+  $.ajax({
+    url: 'http://localhost:3000/avatar',
+    method: 'POST',
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function(response) {
+      alert('Avatar saved successfully');
+    },
+    error: function() {
+      alert('Error occurred while saving the avatar');
+    }
+  });
+}
 
-  function saveUserData() {
-    var name = $('#name').val();
-    var breed = $('#breed').val();
-    var description = $('#description').val();
-    var links = $('#links').val().split(',').map(link => link.trim());
-
-    $.ajax({
-      url: '/savedata',
-      method: 'POST',
-      data: {
-        name: name,
-        breed: breed,
-        description: description,
-        links: links
-      },
-      success: function(response) {
-        if (response.success) {
-          alert('User data saved successfully!');
-        } else {
-          alert('Failed to save user data');
-        }
-      },
-      error: function() {
-        alert('Error occurred while saving user data');
-      }
-    });
-  }
+    // Attach event handlers to the save buttons
+    $('#name + .btn-2').click(saveUserData);
+    $('#breed + .btn-2').click(saveUserData);
+    $('#description + .btn-2').click(saveUserData);
+  });
+  
