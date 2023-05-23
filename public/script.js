@@ -1,66 +1,67 @@
-const addBtnn = document.querySelector('.add-picture-btn');
-const pictureInput = document.querySelector('#picture-input');
+$(function () {
+  $("#uploadForm").on("submit", function (event) {
+    event.preventDefault();
+    var formData = new FormData(this);
 
-addBtnn.addEventListener('click', () => {
-  pictureInput.click();
-});
-
-document.getElementById('uploadForm').addEventListener('submit', function(event) {
-  event.preventDefault();
-
-  var imageFile = document.getElementById('imageInput').files[0];
-  var description = document.getElementById('captionInput').value;
-
-  var formData = new FormData();
-  formData.append('image', imageFile);
-  formData.append('description', description);
-
-  fetch('/upload', {
-    method: 'POST',
-    body: formData
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      loadGallery();
-      alert('Picture uploaded successfully!');
-    } else {
-      alert('Upload failed. Please try again.');
-    }
-  })
-  .catch(error => {
-    alert('Upload failed. Please try again.');
-  });
-});
-
-function loadGallery() {
-  const collection = db.collection('gallery');
-
-  collection
-    .find()
-    .toArray()
-    .then((data) => {
-      var imageContainer = document.getElementById('imageContainer');
-      imageContainer.innerHTML = '';
-
-      data.forEach((item) => {
-        var imageDiv = document.createElement('div');
-        imageDiv.classList.add('image-item');
-
-        var image = document.createElement('img');
-        image.src = item.imageUrl;
-        imageDiv.appendChild(image);
-
-        var description = document.createElement('p');
-        description.textContent = item.description;
-        imageDiv.appendChild(description);
-
-        imageContainer.appendChild(imageDiv);
-      });
-    })
-    .catch((error) => {
-      console.error('Error loading gallery:', error);
+    $.ajax({
+      url: "http://localhost:3000/upload",
+      type: "POST",
+      data: formData,
+      contentType: false,
+      processData: false, 
+      success: function(response) {
+        if (response.success) {
+          var imageUrl = response.imageUrl;
+          var description = formData.get("description");
+          displayImage(imageUrl, description);
+          clearForm(); 
+        } else {
+          console.error("Error uploading image.");
+        }
+      },
+      error: function(xhr, status, error) {
+        console.error("Error:", error);
+      }
     });
-}
+  });
 
-loadGallery();
+  loadGallery();
+
+  function displayImage(imageUrl, description) {
+    var imageElement = $("<div class='image'>")
+      .append($("<img>").attr("src", imageUrl))
+      .append($("<p>").text(description));
+
+    $("#imageContainer").prepend(imageElement);
+  }
+
+  function loadGallery() {
+    $.ajax({
+      url: 'http://localhost:3000/upload',
+      method: 'GET',
+      success: function (response) {
+        var imageContainer = $('#imageContainer');
+        imageContainer.empty();
+        var galleryData = Array.isArray(response) ? response : Object.values(response);
+        galleryData.forEach(function (item) {
+          var imageUrl = item.imageUrl;
+          var description = item.description;
+
+          var image = $('<img>').attr('src', imageUrl);
+
+          var descParagraph = $('<p>').text(description);
+
+          imageContainer.append(image, descParagraph);
+        });
+      },
+      error: function (error) {
+        console.error('Error loading gallery:', error);
+      }
+    });
+  }
+  
+  function clearForm() {
+    $("#imageInput").val("");
+    $("#captionInput").val("");
+  }
+});

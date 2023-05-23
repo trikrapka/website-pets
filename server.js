@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   breed: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  description: {type: String },
+  description: { type: String },
   password: { type: String, required: true },
   avatar: { type: String }
 });
@@ -51,6 +51,7 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+
 app.post('/signup', async (req, res) => {
   const { username, name, breed, email, password, repeatPassword } = req.body;
 
@@ -175,9 +176,9 @@ app.get('/gallery', (req, res) => {
 app.post('/upload', upload.single('image'), (req, res) => {
   const { description } = req.body;
   const imagePath = req.file.path;
-  const imageUrl = '/uploads/' + req.file.filename;
+  const imageUrl = '/posts/' + req.file.filename;
 
-  const collection = db.collection('gallery');
+  const collection = db.collection('photos');
 
   collection
     .insertOne({ imageUrl, description })

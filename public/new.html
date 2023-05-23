@@ -1,33 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <title>Page for posting photos</title>
-    <link rel="stylesheet" href="/public/style.css"/>
+    <link rel="stylesheet" href="/public/style.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="/public/script.js"></script>
     <script>
-        $(function(){
+        $(function () {
             $("#navbar").load("/public/navbar.html");
         });
     </script>
 </head>
-<body class="background">
+
+<body class="background, newform">
     <div id="navbar"></div>
-    
-    <div class="row justify-content-center" style="margin-top: 100px;">
-        <div class="text col-12 text-center" style="margin: 50px 0;">Create a new post</div>
-    <div class="row">
-        <div class="col-12">
-        <form id="uploadForm" enctype="multipart/form-data">
-            <input type="file" id="imageInput" multiple>
-            <textarea id="captionInput" placeholder="Write a description"></textarea>
-            <button type="submit" class="btn-submit">Upload</button>
-        </form>
-        </div>
-    </div>
-    <div class="row">
-        <div id="imageContainer"></div>
-    </div>
-    </div>
-</body>      
+    <form id="uploadForm" enctype="multipart/form-data" action="/upload" method="post">
+        <input type="file" name="image" id="imageInput" multiple>
+        <textarea name="description" id="captionInput" placeholder="Write a description"></textarea>
+        <button type="submit" class="btn-submit">Upload</button>
+    </form>
+</body>
+
+</html>

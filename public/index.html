@@ -13,17 +13,8 @@
     <script>
         $(function () {
             $("#navbar").load("/public/navbar.html");
-            if (localStorage.getItem('isLoggedIn') === 'true') {
-                document.getElementById('newButton').disabled = false; // Enable the button
-            } else {
-                document.getElementById('newButton').disabled = true; // Disable the button
-            }
-            if (localStorage.getItem('isLoggedIn') === 'true') {
-                document.getElementById('profileButton').disabled = false; // Enable the button
-            } else {
-                document.getElementById('profileButton').disabled = true; // Disable the button
-            }
         });
+        loadGallery();
     </script>
 </head>
 
