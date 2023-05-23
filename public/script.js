@@ -56,7 +56,7 @@ const addPictureBtn = document.querySelector('.add-picture-btn');
         })
         .catch((error) => {
           console.error('Error loading gallery:', error);
-        });
+        }); 
     }
     
     loadGallery();

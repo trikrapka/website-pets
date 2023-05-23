@@ -14,17 +14,26 @@
   db.once('open', () => {
     console.log('Connected to MongoDB');
   });
-
+  const userSchema = new mongoose.Schema({
+    username: String,
+    name: String,
+    breed: String,
+    email: String,
+    password: String
+  });
+  
+  const User = mongoose.model('User', userSchema);
+  
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
 
-  app.post('db.signin', (req, res) => {
+  app.post('/signin', (req, res) => {
     const { email, password } = req.body;
     const User = mongoose.model('User', {
       email: String,
       password: String
     });
-
+    
     const newUser = new User({
       email,
       password
