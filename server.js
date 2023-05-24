@@ -42,6 +42,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false
 }));
+app.use('/public', express.static('public'));
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
