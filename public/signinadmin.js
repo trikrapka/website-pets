@@ -1,5 +1,5 @@
 $(function() {
-    $('#admin-login-form').submit(function(event) {
+  $(document).on('submit', '#admin-login-form', function(event) {
       event.preventDefault();
 
       var formData = {
@@ -8,7 +8,7 @@ $(function() {
       };
   
       $.ajax({
-        url: '/adminlogin',
+        url: 'http://localhost:3000/signinadmin',
         type: 'POST',
         data: formData,
         success: function(response) {

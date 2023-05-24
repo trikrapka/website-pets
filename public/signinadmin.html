@@ -10,8 +10,8 @@
 <body class="background">
     <div class="row col-8"></div>
     <div class="text hi">Hi, Admin!</div>
-    <form class="form text" action="/signin" method="post">
-        <input class="input" name="email" placeholder="USername " required>
+    <form class="form text" id="admin-login-form"> <!-- Remove the action attribute -->
+        <input class="input" name="email" placeholder="Username" required>
         <input class="input" type="password" name="password" placeholder="Password" required>
         <button class="btn" type="submitAdmin">Sign In</button>
         <button class="signasadmin" type="button" onclick="window.location.href='/public/signin.html'">Sign in as User</button>

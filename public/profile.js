@@ -1,5 +1,6 @@
 $(function() {
   $('#navbar').load('navbar.html');
+
   $.ajax({
     url: 'http://localhost:3000/profile',
     method: 'GET',
@@ -12,7 +13,6 @@ $(function() {
       alert('Error occurred while loading user data');
     }
   });
-
 
   function saveUserData() {
     var name = $('#name').val();
@@ -37,6 +37,7 @@ $(function() {
       }
     });
   }
+
   function saveAvatar() {
     var avatarFile = document.getElementById('avatar-input').files[0];
     var formData = new FormData();
@@ -66,10 +67,13 @@ $(function() {
       var resizedAvatarDataUrl = canvas.toDataURL('image/jpeg');
       document.getElementById('avatar-preview-image').src = resizedAvatarDataUrl;
 
-      fetch('http://localhost:3000/avatars', {
+      var requestOptions = {
         method: 'POST',
         body: formData
-      })
+      };
+
+      fetch('http://localhost:3000/avatars', requestOptions)
+        .then(response => response.json())
         .then(data => {
           alert('Avatar saved successfully');
         })
@@ -78,14 +82,15 @@ $(function() {
         });
     };
   }
+
   function showSavedAvatar() {
     $.ajax({
-      url: 'http://localhost:3000/avatars/',
+      url: 'http://localhost:3000/avatars',
       method: 'GET',
       success: function(response) {
         // Display user's avatar
         if (response.avatar) {
-          $('#avatar-preview-image').attr('src', '/uploads/' + response.avatar);
+          $('#avatar-preview-image').attr('src', '/avatars/' + response.avatar);
         }
       },
       error: function() {
