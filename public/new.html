@@ -14,13 +14,19 @@
     </script>
 </head>
 
-<body class="background, newform">
+<body class="background">
     <div id="navbar"></div>
-    <form id="uploadForm" enctype="multipart/form-data" action="/upload" method="post">
-        <input type="file" name="image" id="imageInput" multiple>
-        <textarea name="description" id="captionInput" placeholder="Write a description"></textarea>
-        <button type="submit" class="btn-submit">Upload</button>
-    </form>
+    <div class="row justify-content-center" style="margin-top: 100px;">
+        <div class="row">
+            <div class="col-12">
+                <form id="uploadForm" enctype="multipart/form-data" action="/upload" method="post">
+                    <input type="file" name="image" id="imageInput" multiple>
+                    <textarea name="description" id="captionInput" placeholder="Write a description"></textarea>
+                    <button type="submit" class="btn-submit">Upload</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
