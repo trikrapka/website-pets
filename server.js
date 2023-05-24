@@ -48,8 +48,15 @@ const adminSchema = new mongoose.Schema({
   password: { type: String, required: true },
 });
 
+const commentSchema = new mongoose.Schema({
+  content: String,
+  author: String,
+});
+
 const User = mongoose.model("User", userSchema);
 const Admin = mongoose.model("Admin", adminSchema);
+const Comment = mongoose.model('Comment', commentSchema);
+
 const db = client.db();
 
 // Middleware
@@ -64,7 +71,8 @@ app.use(
   })
 );
 app.use("/public", express.static("public"));
-app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static("uploads")); 
+
 
 // Multer configuration
 const storage = multer.diskStorage({
@@ -347,6 +355,25 @@ app.delete("/gallery", async (req, res) => {
       .status(500)
       .json({ success: false, message: "Failed to delete image" });
   }
+});
+
+app.post('/comments', (req, res) => {
+  const { content, author } = req.body;
+
+  const newComment = new Comment({
+    content,
+    author,
+  });
+
+  newComment.save()
+    .then((comment) => {
+      console.log('Comment saved:', comment);
+      res.status(200).json({ success: true, comment });
+    })
+    .catch((error) => {
+      console.error('Error saving comment:', error);
+      res.status(500).json({ success: false, message: 'Internal Server Error' });
+    });
 });
 
 app.listen(PORT, () => {

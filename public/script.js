@@ -1,6 +1,4 @@
 $(function () {
-  var signedInAsAdmin = localStorage.getItem('isLoggedInAdmin'); 
-
   $("#uploadForm").on("submit", function (event) {
     event.preventDefault();
     var formData = new FormData(this);
@@ -27,42 +25,41 @@ $(function () {
     });
   });
 
-  loadGallery();
-
   function displayImage(imageUrl, description) {
     var imageElement = $("<div class='image'>")
       .append($("<img>").attr("src", imageUrl))
       .append($("<p>").text(description));
 
-    if (signedInAsAdmin) {
-      var deleteButton = $("<button>")
-        .text("Delete")
-        .addClass("deleteButton")
-        .on("click", function () {
-          deleteImage(imageUrl);
-        });
+    var commentForm = $("<form class='comment-form'>")
+      .append($("<input type='text' name='comment' placeholder='Leave a comment' required>"))
+      .append($("<input type='text' name='author' placeholder='Your name' required>"))
+      .append($("<button type='submit'>Submit</button>").on("click", function(event) {
+        event.preventDefault();
+        submitComment($(this).closest('.image'));
+      }));
 
-      imageElement.append(deleteButton);
-    }
+    imageElement.append(commentForm);
 
     $("#imageContainer").prepend(imageElement);
   }
 
-  function clearForm() {
-    $("#imageInput").val("");
-    $("#captionInput").val("");
-  }
+  function submitComment(imageElement) {
+    var commentForm = imageElement.find('.comment-form');
+    var formData = new FormData(commentForm[0]);
 
-  function deleteImage(imageUrl) {
     $.ajax({
-      url: "http://localhost:3000/gallery",
-      type: "DELETE",
-      data: { imageUrl: imageUrl },
+      url: "http://localhost:3000/comments",
+      type: "POST",
+      data: formData,
+      contentType: false,
+      processData: false,
       success: function (response) {
         if (response.success) {
-          $("img[src='" + imageUrl + "']").parent().remove();
+          var comment = response.comment;
+          displayComment(imageElement, comment);
+          clearForm(commentForm);
         } else {
-          console.error("Error deleting image.");
+          console.error("Error submitting comment.");
         }
       },
       error: function (xhr, status, error) {
@@ -70,43 +67,16 @@ $(function () {
       }
     });
   }
-    $("#commentForm").on("submit", function (event) {
-      event.preventDefault();
-      var formData = new FormData(this);
-  
-      $.ajax({
-        url: "http://localhost:3000/comments",
-        type: "POST",
-        data: formData,
-        contentType: false,
-        processData: false,
-        success: function (response) {
-          if (response.success) {
-            var comment = response.comment;
-            displayComment(comment);
-            clearForm();
-          } else {
-            console.error("Error submitting comment.");
-          }
-        },
-        error: function (xhr, status, error) {
-          console.error("Error:", error);
-        }
-      });
-    });
 
-    loadComments();
-  
-    function displayComment(comment) {
-      var commentElement = $("<div class='comment'>")
-        .append($("<p>").text(comment.content))
-        .append($("<span>").text("By: " + comment.author));
-  
-      $("#commentContainer").prepend(commentElement);
-    }
-  
-    function clearForm() {
-      $("#commentInput").val("");
-      $("#authorInput").val("");
-    }
+  function displayComment(imageElement, comment) {
+    var commentElement = $("<div class='comment'>")
+      .append($("<p>").text(comment.content))
+      .append($("<span>").text("By: " + comment.author));
+
+    imageElement.append(commentElement);
+  }
+
+  function clearForm(form) {
+    form.find("input[type='text']").val("");
+  }
 });
