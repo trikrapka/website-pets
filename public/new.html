@@ -19,8 +19,8 @@
     <div class="text col-12 text-center" style="margin: 50px 0; margin-left: 35vw; margin-top: 25vh;">Create a new post</div>
 <div class="row" style="margin-left: 35vw; margin-top: 5vh;">
     <div class="col-12">
-    <form id="uploadForm" enctype="multipart/form-data">
-        <input type="file" id="imageInput" multiple>
+    <form id="uploadForm" method="POST" enctype="multipart/form-data">
+        <input type="file" id="imageInput" name="image" multiple>
         <textarea id="captionInput" placeholder="Write a description"></textarea>
         <button type="submit" class="btn-submit">Upload</button>
     </form>

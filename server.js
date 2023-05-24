@@ -180,7 +180,7 @@ app.post('/upload', upload.single('image'), (req, res) => {
 
   const collection = db.collection('photos');
 
-  collection
+  collection  
     .insertOne({ imageUrl, description })
     .then(() => {
       res.json({ success: true });
