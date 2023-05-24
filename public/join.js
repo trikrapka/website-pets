@@ -3,7 +3,7 @@
     $(document).on('submit', 'form', function(event) {
       event.preventDefault();
 
-      var username = $('input[name="username"]').val();
+      var typeofpet = $('input[name="typeofpet"]').val();
       var name = $('input[name="name"]').val();
       var breed = $('input[name="breed"]').val();
       var email = $('input[name="email"]').val();
@@ -17,7 +17,7 @@
         url: 'http://localhost:3000/signup',
         method: 'POST',
         data: {
-          username: username,
+          typeofpet: typeofpet,
           name: name,
           breed: breed,
           email: email,
