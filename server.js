@@ -5,6 +5,8 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
 const session = require('express-session');
+const sharp = require('sharp');
+const fs = require('fs/promises');
 
 const app = express();
 const PORT = 3000;
@@ -53,72 +55,76 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 app.post('/signup', async (req, res) => {
-  const { username, name, breed, email, password, repeatPassword } = req.body;
+  try {
+    const { username, name, breed, email, password, repeatPassword } = req.body;
 
-  if (!username || !name || !breed || !email || !password || !repeatPassword) {
-    return res.status(400).json({ status: 405, message: 'All fields are required' });
-  }
+    if (!username || !name || !breed || !email || !password || !repeatPassword) {
+      return res.status(400).json({ status: 405, message: 'All fields are required' });
+    }
 
-  if (password !== repeatPassword) {
-    return res.status(400).json({ status: 405, message: 'Passwords do not match' });
-  }
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = new User({
-    username,
-    name,
-    breed,
-    email,
-    password: hashedPassword
-  });
+    if (password !== repeatPassword) {
+      return res.status(400).json({ status: 405, message: 'Passwords do not match' });
+    }
 
-  newUser.save()
-  .then(() => {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      username,
+      name,
+      breed,
+      email,
+      password: hashedPassword
+    });
+
+    await newUser.save();
     res.status(200).json({ status: 200, message: 'Sign-up successful' });
-  })
-  .catch((error) => {
+  } catch (error) {
     console.error('Error occurred while saving user:', error);
     res.status(500).json({ status: 500, message: 'Internal Server Error' });
-  });
+  }
 });
 
 app.post('/signin', async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
 
-  if (!user) {
-    return res.status(401).json({ status: 401, message: 'Invalid email or password' });
+    if (!user) {
+      return res.status(401).json({ status: 401, message: 'Invalid email or password' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ status: 401, message: 'Invalid email or password' });
+    }
+
+    res.status(200).json({ status: 200, message: 'Login successful' });
+  } catch (error) {
+    console.error('Error occurred while signing in:', error);
+    res.status(500).json({ status: 500, message: 'Internal Server Error' });
   }
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-
-  if (!isPasswordValid) {
-    return res.status(401).json({ status: 401, message: 'Invalid email or password' });
-  }
-
-  res.status(200).json({ status: 200, message: 'Login successful' });
 });
 
-app.get('/profile', (req, res) => {
-  User.findOne({})
-    .then(userData => {
-      res.json(userData);
-    })
-    .catch(err => {
-      console.error('Error occurred while retrieving user data:', err);
-      res.status(500).json({ status: 500, message: 'Internal Server Error' });
-    });
+app.get('/profile', async (req, res) => {
+  try {
+    const userData = await User.findOne({});
+    res.json(userData);
+  } catch (error) {
+    console.error('Error occurred while retrieving user data:', error);
+    res.status(500).json({ status: 500, message: 'Internal Server Error' });
+  }
 });
 
-app.post('/profile', (req, res) => {
-  const { name, breed, description } = req.body;
+app.post('/profile', async (req, res) => {
+  try {
+    const { name, breed, description } = req.body;
 
-  User.findOneAndUpdate({}, { name, breed, description })
-    .then(() => {
-      res.status(200).json({ status: 200, message: 'User data saved successfully' });
-    })
-    .catch(err => {
-      console.error('Error occurred while saving user data:', err);
-      res.status(500).json({ status: 500, message: 'Internal Server Error' });
-    });
+    await User.findOneAndUpdate({}, { name, breed, description });
+    res.status(200).json({ status: 200, message: 'User data saved successfully' });
+  } catch (error) {
+    console.error('Error occurred while saving user data:', error);
+    res.status(500).json({ status: 500, message: 'Internal Server Error' });
+  }
 });
 
 app.post('/avatars', upload.single('avatar'), async (req, res) => {
@@ -127,16 +133,12 @@ app.post('/avatars', upload.single('avatar'), async (req, res) => {
       return res.status(400).send('No file uploaded.');
     }
 
-    const sharp = require('sharp');
     const avatarFilePath = req.file.path;
-
     const buffer = await sharp(avatarFilePath)
       .resize(50, 50)
       .toBuffer();
 
-    const fs = require('fs/promises');
     const resizedAvatarFilePath = `./uploads/resized_${req.file.filename}`;
-
     await fs.writeFile(resizedAvatarFilePath, buffer);
 
     const avatarFileName = `resized_${req.file.filename}`;
@@ -158,19 +160,16 @@ app.post('/avatars', upload.single('avatar'), async (req, res) => {
     res.status(500).send('Failed to upload avatar.');
   }
 });
-app.get('/gallery', (req, res) => {
-  const collection = db.collection('gallery');
 
-  collection
-    .find()
-    .toArray()
-    .then((data) => {
-      res.json(data);
-    })
-    .catch((error) => {
-      console.error('Error loading gallery:', error);
-      res.status(500).json({ status: 500, message: 'Internal Server Error' });
-    });
+app.get('/gallery', async (req, res) => {
+  try {
+    const collection = db.collection('gallery');
+    const data = await collection.find().toArray();
+    res.json(data);
+  } catch (error) {
+    console.error('Error loading gallery:', error);
+    res.status(500).json({ status: 500, message: 'Internal Server Error' });
+  }
 });
 
 app.post('/upload', upload.single('image'), (req, res) => {
