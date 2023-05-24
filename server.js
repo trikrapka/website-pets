@@ -240,6 +240,56 @@ app.get('/gallery', (req, res) => {
     });
 });
 
+app.post('/adminlogin', (req, res) => {
+  const { username, password } = req.body;
+  if (username === 'admin' && password === 'admin123') {
+    res.status(200).send('Admin login successful');
+  } else {
+    res.status(401).send('Invalid credentials');
+  }
+});
+
+app.post("/comments", function (req, res) {
+  var commentData = {
+    content: req.body.content,
+    author: req.body.author
+  };
+
+  Comment.create(commentData, function (err, comment) {
+    if (err) {
+      console.error("Error saving comment:", err);
+      res.status(500).json({ success: false, error: "Failed to save comment." });
+    } else {
+      res.status(200).json({ success: true, comment: comment });
+    }
+  });
+});
+
+app.delete('/gallery', async (req, res) => {
+  const imageUrl = req.body.imageUrl;
+
+  const signedInAsAdmin = true;
+
+  if (!signedInAsAdmin) {
+    return res.status(403).json({ success: false, message: 'Unauthorized' });
+  }
+
+  try {
+    const image = await Image.findOne({ imageUrl });
+
+    if (!image) {
+      return res.status(404).json({ success: false, message: 'Image not found' });
+    }
+    const imagePath = path.join(__dirname, 'uploads', image.filename);
+    fs.unlinkSync(imagePath);
+    await image.remove();
+
+    return res.status(200).json({ success: true, message: 'Image deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting image:', error);
+    return res.status(500).json({ success: false, message: 'Failed to delete image' });
+  }
+});
 
 
 app.listen(PORT, () => {
