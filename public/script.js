@@ -4,7 +4,7 @@ $(function () {
     var formData = new FormData(this);
 
     $.ajax({
-      url: "http://localhost:3000/upload",
+      url: "http://localhost:3000/gallery",
       type: "POST",
       data: formData,
       contentType: false,
@@ -34,32 +34,6 @@ $(function () {
 
     $("#imageContainer").prepend(imageElement);
   }
-
-  function loadGallery() {
-    $.ajax({
-      url: 'http://localhost:3000/upload',
-      method: 'GET',
-      success: function (response) {
-        var imageContainer = $('#imageContainer');
-        imageContainer.empty();
-        var galleryData = Array.isArray(response) ? response : Object.values(response);
-        galleryData.forEach(function (item) {
-          var imageUrl = item.imageUrl;
-          var description = item.description;
-  
-          var image = $('<img>').attr('src', imageUrl);
-  
-          var descParagraph = $('<p>').text(description);
-  
-          imageContainer.append(image, descParagraph);
-        });
-      },
-      error: function (error) {
-        console.error('Error loading gallery:', error);
-      }
-    });
-  }
-  
   
   function clearForm() {
     $("#imageInput").val("");

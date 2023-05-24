@@ -13,10 +13,12 @@ $(function() {
     }
   });
 
+
   function saveUserData() {
     var name = $('#name').val();
     var breed = $('#breed').val();
     var description = $('#description').val();
+    var password = $('#password').val();
 
     $.ajax({
       url: 'http://localhost:3000/profile',
@@ -24,7 +26,8 @@ $(function() {
       data: {
         name: name,
         breed: breed,
-        description: description
+        description: description,
+        password: password
       },
       success: function(response) {
         alert('User data saved successfully');
@@ -75,10 +78,27 @@ $(function() {
         });
     };
   }
+  function showSavedAvatar() {
+    $.ajax({
+      url: 'http://localhost:3000/avatars/',
+      method: 'GET',
+      success: function(response) {
+        // Display user's avatar
+        if (response.avatar) {
+          $('#avatar-preview-image').attr('src', '/uploads/' + response.avatar);
+        }
+      },
+      error: function() {
+        alert('Error occurred while loading user data');
+      }
+    });
+  }
 
+  showSavedAvatar();
 
   $(document).on('click', '#avatar-button', saveAvatar);
   $(document).on('click', '#name + .btn-2', saveUserData);
   $(document).on('click', '#breed + .btn-2', saveUserData);
   $(document).on('click', '#description + .btn-2', saveUserData);
+  $(document).on('click', '#password + .btn-2', saveUserData);
 });

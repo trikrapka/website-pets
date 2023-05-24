@@ -9,6 +9,9 @@
       var email = $('input[name="email"]').val();
       var password = $('input[name="password"]').val();
       var repeatPassword = $('input[name="repeatPassword"]').val();
+      var type;
+      var gender;
+      var avatar;
 
       $.ajax({
         url: 'http://localhost:3000/signup',
@@ -19,7 +22,10 @@
           breed: breed,
           email: email,
           password: password,
-          repeatPassword: repeatPassword
+          repeatPassword: repeatPassword,
+          type: type,
+          gender: gender,
+          avatar: avatar
         },
         success: function(response) {
           if (response.status === 200) {
