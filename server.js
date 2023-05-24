@@ -42,6 +42,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false
 }));
+app.use('/public', express.static('public'));
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -179,7 +180,7 @@ app.post('/upload', upload.single('image'), (req, res) => {
 
   const collection = db.collection('photos');
 
-  collection
+  collection  
     .insertOne({ imageUrl, description })
     .then(() => {
       res.json({ success: true });

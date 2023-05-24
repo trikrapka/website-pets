@@ -37,7 +37,7 @@ $(function () {
 
   function loadGallery() {
     $.ajax({
-      url: 'http://localhost:3000/gallery',
+      url: 'http://localhost:3000/upload',
       method: 'GET',
       success: function (response) {
         var imageContainer = $('#imageContainer');
