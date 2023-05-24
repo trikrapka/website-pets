@@ -13,14 +13,20 @@
         });
     </script>
 </head>
-
-<body class="background, newform">
+<body class="background">
     <div id="navbar"></div>
-    <form id="uploadForm" enctype="multipart/form-data" action="/upload" method="post">
-        <input type="file" name="image" id="imageInput" multiple>
-        <textarea name="description" id="captionInput" placeholder="Write a description"></textarea>
+<div class="row justify-content-center" style="margin-top: 100px;">
+    <div class="text col-12 text-center" style="margin: 50px 0; margin-left: 35vw; margin-top: 25vh;">Create a new post</div>
+<div class="row" style="margin-left: 35vw; margin-top: 5vh;">
+    <div class="col-12">
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="imageInput" multiple>
+        <textarea id="captionInput" placeholder="Write a description"></textarea>
         <button type="submit" class="btn-submit">Upload</button>
     </form>
-</body>
+    </div>
+</div>
+</div>
+</body>      
 
 </html>
