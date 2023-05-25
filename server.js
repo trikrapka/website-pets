@@ -197,20 +197,24 @@ app.post("/profile", async (req, res) => {
   }
 });
 app.use(express.static("uploads"));
-app.get("/avatars/:filename", (req, res) => {
-  const filename = req.params.filename;
-  const avatarPath = `./uploads/resized_${filename}`;
+app.get("/avatars/filename", (req, res) => {
+  const userId = req.session.userId;
 
-  fs.readFile(avatarPath, (error, data) => {
-    if (error) {
-      console.error("Failed to read avatar file:", error);
-      res.status(500).send("Failed to load avatar.");
-    } else {
-      res.set("Content-Type", "image/jpeg");
-      res.send(data);
-    }
-  });
+  User.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).json({ status: 404, message: "User not found" });
+      }
+
+      const avatarFileName = user.avatar;
+      res.json({ avatar: avatarFileName });
+    })
+    .catch((error) => {
+      console.error("Error occurred while retrieving user data:", error);
+      res.status(500).json({ status: 500, message: "Internal Server Error" });
+    });
 });
+
 
 app.post("/avatars", upload.single("avatar"), async (req, res) => {
   try {

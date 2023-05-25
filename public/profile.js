@@ -85,7 +85,7 @@ $(function() {
 
   function showSavedAvatar() {
     $.ajax({
-      url: 'http://localhost:3000/avatars',
+      url: 'http://localhost:3000/avatars/filename',
       method: 'GET',
       success: function(response) {
         // Display user's avatar
