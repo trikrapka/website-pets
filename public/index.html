@@ -41,8 +41,41 @@
                             var commentInput = $('<input type="text" name="comment" placeholder="Leave a comment" required>');
                             var authorInput = $('<input type="text" name="author" placeholder="Your name" required>');
                             var submitButton = $('<button type="submit">Submit</button>');
+                            var photo_id = $("<input type='text' name='photo_id' required>");
+                            photo_id.hide();
+                            photo_id.val(_id);
+                            commentForm.submit(function (event) {
+    event.preventDefault(); // Prevent the default form submission behavior
 
-                            commentForm.append(commentInput, authorInput, submitButton);
+    // Retrieve the form data
+    var formData = {
+        author: authorInput.val(),
+        photo_id: photo_id.val(),
+        content: commentInput.val()
+    };
+
+    // Send a POST request to the server
+    $.ajax({
+        type: 'POST',
+        url: '/comments',
+        data: formData,
+        success: function (response) {
+            console.log('Comment saved:', response.comment);
+            // Optionally, you can perform any additional actions here, such as displaying a success message
+            
+            // Reload the page
+            location.reload();
+        },
+        error: function (error) {
+            console.error('Error saving comment:', error);
+            // Optionally, you can display an error message to the user
+        }
+    });
+});
+
+
+
+                            commentForm.append(photo_id,commentInput, authorInput, submitButton);
                             imageDiv.append(commentForm);
 
                             imageContainer.append(imageDiv);
@@ -67,6 +100,7 @@
                     .append($("<p>").text(description));
 
                 var commentForm = $("<form class='comment-form'>")
+                    .append($("<input type='text' name='photo_id' style='margin-right: 10px;' placeholder='Leave a comment' required> "))
                     .append($("<input type='text' name='comment' style='margin-right: 10px;' placeholder='Leave a comment' required>"))
                     .append($("<input type='text' name='author'style='margin-right: 10px;' placeholder='Your name' required>"))
                     .append($("<button type='submit'>Submit</button>").on("click", function (event) {

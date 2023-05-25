@@ -360,12 +360,12 @@ app.delete("/gallery", async (req, res) => {
 });
 
 app.post('/comments', (req, res) => {
-  const { user_id, photo_id, comment_text } = req.body;
+  const { author, photo_id, content } = req.body;
 
   const newComment = new Comment({
-    user_id,
+    author,
     photo_id,
-    comment_text
+    content
   });
 
   newComment.save()
