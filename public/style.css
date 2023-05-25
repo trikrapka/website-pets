@@ -385,3 +385,30 @@ button.btn-submit:hover {
   width: 20px;
   height: 20px;
 }
+
+.input-comment {
+  display: block;
+  width: 400px;
+  padding: 8px 10px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  text-align: center;
+  font-family: "Lobster", cursive;
+  font-size: 16px;
+  background-color: #fff;
+  border-radius: 50px;
+}
+
+.delete-button {
+  display: block;
+  width: 200px;
+  padding: 8px 10px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+  border: 0;
+  cursor: pointer;
+  text-align: center;
+  font-family: "Lobster", cursive;
+  font-size: 16px;
+  background-color: #ff1c1c;
+}
