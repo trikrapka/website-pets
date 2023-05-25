@@ -286,24 +286,6 @@ app.get("/gallery", (req, res) => {
     });
 });
 
-app.post("/comments", function (req, res) {
-  var commentData = {
-    content: req.body.content,
-    author: req.body.author,
-  };
-
-  Comment.create(commentData, function (err, comment) {
-    if (err) {
-      console.error("Error saving comment:", err);
-      res
-        .status(500)
-        .json({ success: false, error: "Failed to save comment." });
-    } else {
-      res.status(200).json({ success: true, comment: comment });
-    }
-  });
-});
-
 app.delete("/gallery", async (req, res) => {
   const imageUrl = req.body.imageUrl;
 
@@ -354,6 +336,21 @@ app.post('/comments', (req, res) => {
       res.status(500).json({ success: false, message: 'Internal Server Error' });
     });
 });
+
+app.get('/comments', (req, res) => {
+  Comment.find()
+    .then((comments) => {
+      res.status(200).json({ success: true, comments });
+    })
+    .catch((error) => {
+      console.error('Error loading comments:', error);
+      res.status(500).json({ success: false, message: 'Internal Server Error' });
+    });
+});
+
+app.get('/signup', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'signup.html'));
+})
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
