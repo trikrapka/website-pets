@@ -26,18 +26,29 @@
                         galleryData.forEach(function (item) {
                             var imageUrl = item.imageUrl;
                             var description = item.description;
+                            var _id = item._id;
+
+                            var divId = document.createElement("div");
+                            divId.id = _id;
 
                             var image = $('<img>').attr('src', imageUrl);
                             var descParagraph = $('<p>').text(description);
 
                             var imageDiv = $('<div class="image">');
-                            imageDiv.append(image, descParagraph);
+                            imageDiv.append(image, descParagraph, divId);
+                            // imageDiv.append('<div id="">'+$id+'</div>');
+
 
                             var commentForm = $('<form class="comment-form">');
                             var commentInput = $('<input class="input-comment" type="text" name="comment" placeholder="Leave a comment" required>');
                             var authorInput = $('<input class="input-comment" type="text" name="author" placeholder="Your name" required>');
                             var submitButton = $('<button class="btn-submit" type="submit">Submit</button>');
-                            var deleteButton = $('<button class="delete-button"> Delete post </button>');
+                            if (localStorage.getItem('isLoggedInAdmin') === 'true') {
+                                var deleteButton = $('<button type="submit-delete" class="delete-button"> Delete post </button>');
+                            } 
+                            else if (localStorage.getItem('isLoggedInAdmin') === 'false') {
+                                var deleteButton = $('<button type="submit-delete" class="delete-button" style="display: none;"> Delete post </button>');
+                            }
                             deleteButton.appendTo(imageDiv);
                             commentForm.append(commentInput, authorInput, submitButton);
                             imageDiv.append(commentForm);
@@ -52,13 +63,16 @@
             }
 
             loadGallery();
+            getComments();
             function displayImage(imageUrl, description, imageId) {
-                var imageElement = $("<div class='image'>")
+                var imageElement = $("<div class='image'>").attr('data-id', imageId)
                     .append($("<img>").attr("src", imageUrl))
                     .append($("<p>").text(description));
 
-                var deleteButton = $("<button class='delete-button'>Delete</button>").on("click", function (event) {
+                var deleteButton = $("<button type='submit-delete' class='delete-button'>Delete p</button>").on("click", function (event) {
                     event.preventDefault();
+                    var imageId = getImageId($(this).closest('.image'));
+                    var imageElement = $(this).closest('.image');
                     deleteImage(imageId, imageElement);
                 });
 
@@ -73,6 +87,23 @@
 
                 $("#imageContainer").prepend(imageElement);
             }
+            function deleteImage(imageUrl, imageElement) {
+                $.ajax({
+                    url: "http://localhost:3000/gallery/" + imageUrl, // Pass imageUrl as the id parameter
+                    type: "DELETE",
+                    success: function (response) {
+                        if (response.success) {
+                            imageElement.remove();
+                        } else {
+                            console.error("Error deleting image.");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error:", error);
+                    }
+                });
+            }
+
 
             function submitComment(imageElement) {
                 var commentForm = imageElement.find('.comment-form');
@@ -107,11 +138,52 @@
                 imageElement.append(commentElement);
             }
 
+            function getComments() {
+                $.ajax({
+                    url: 'http://localhost:3000/comments',
+                    method: 'GET',
+                    success: function (response) {
+
+                        var commentData = Array.isArray(response.comments) ? response.comments : Object.values(response.comments);
+
+                        commentData.forEach(function (item) {
+
+
+                            var content = item.content;
+                            var author = item.author;
+                            var photo_id = item.photo_id;
+                            var commentContainer = $('#' + photo_id);
+
+                            var comment = $('<p class="comment">').text(content);
+                            var authorParagraph = $('<p class="comment">').text(author);
+                            var id = $('<p>').text(photo_id);
+
+                            var commentDiv = $('<div class="comment">');
+                            commentDiv.append(comment, authorParagraph);
+
+                            commentContainer.append(commentDiv);
+                        });
+                    },
+                    error: function (error) {
+                        var commentContainer = $('#commentContainer');
+                        var comment = $('<p>').text('Error loading comments');
+                        console.error('Error loading comments:', error);
+                        commentContainer.append(comment);
+                    }
+                });
+            }
+
             function clearForm(form) {
                 form.find("input[type='text']").val("");
             }
-        });
 
+            $(document).on("click", "button[type='submit-delete']", function (event) {
+                event.preventDefault();
+                var imageId = $(this).closest('.image').attr('data-id');
+                var imageElement = $(this).closest('.image');
+                deleteImage(imageId, imageElement);
+            });
+        });
     </script>
 </head>
 

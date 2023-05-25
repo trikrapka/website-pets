@@ -412,3 +412,9 @@ button.btn-submit:hover {
   font-size: 16px;
   background-color: #ff1c1c;
 }
+.comment{
+  font-size: 14px;
+  display: flex;
+  justify-content: left;
+  align-items: left;
+}

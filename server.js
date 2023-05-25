@@ -7,19 +7,19 @@ const multer = require("multer");
 const session = require("express-session");
 const sharp = require("sharp");
 const fs = require("fs/promises");
-const engine = require('ejs-locals');
+const engine = require("ejs-locals");
 
 const app = express();
 //using ejs for ease
-app.set('view engine', 'ejs');
-app.engine('ejs', engine);
+app.set("view engine", "ejs");
+app.engine("ejs", engine);
 //taking input from HTML, setting paths to files to app.js
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('public'));
+app.use(express.static("public"));
 
 const PORT = 3000;
 const MongoClient = require("mongodb").MongoClient;
-const uri = "mongodb://localhost:27017/db";
+const uri = "mongodb://127.0.0.1:27017/petsdb";
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -27,7 +27,7 @@ const client = new MongoClient(uri, {
 
 // Connect to MongoDB
 mongoose
-  .connect("mongodb://localhost:27017/db", {
+  .connect("mongodb://127.0.0.1:27017/petsdb", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -59,11 +59,17 @@ const adminSchema = new mongoose.Schema({
 const commentSchema = new mongoose.Schema({
   content: String,
   author: String,
+  photo_id: String,
+});
+
+const photosSchema = new mongoose.Schema({
+  imageUrl: { type: String },
+  description: { type: String },
 });
 
 const User = mongoose.model("User", userSchema);
 const Admin = mongoose.model("admins", adminSchema);
-const Comment = mongoose.model('comments', commentSchema);
+const Comment = mongoose.model("comments", commentSchema);
 
 const db = client.db();
 
@@ -79,13 +85,14 @@ app.use(
   })
 );
 app.use("/public", express.static("public"));
-app.use("/uploads", express.static("uploads")); 
+app.use("/uploads", express.static("uploads"));
+app.use("/photos", express.static("photos"));
 //using ejs for ease
-app.set('view engine', 'ejs');
-app.engine('ejs', engine);
+app.set("view engine", "ejs");
+app.engine("ejs", engine);
 //taking input from HTML, setting paths to files to app.js
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('public'));
+app.use(express.static("public"));
 
 // Multer configuration
 const storage = multer.diskStorage({
@@ -259,8 +266,6 @@ app.get("/avatars/filename", async (req, res) => {
 
 app.use(express.static("uploads"));
 
-
-
 app.post("/avatars", upload.single("avatar"), async (req, res) => {
   try {
     if (!req.file) {
@@ -290,8 +295,6 @@ app.post("/avatars", upload.single("avatar"), async (req, res) => {
     res.status(500).send("Failed to upload avatar.");
   }
 });
-
-app.use("/uploads", express.static("uploads"));
 
 app.post("/gallery", upload.single("image"), (req, res) => {
   const { description } = req.body;
@@ -326,92 +329,95 @@ app.get("/gallery", (req, res) => {
     });
 });
 
-app.delete("/gallery", async (req, res) => {
-  const imageUrl = req.body.imageUrl;
+const { ObjectId } = require("mongodb");
+app.delete("/gallery/:id", (req, res) => {
+  const photoId = req.params.id;
 
-  const signedInAsAdmin = true;
-
-  if (!signedInAsAdmin) {
-    return res.status(403).json({ success: false, message: "Unauthorized" });
-  }
-
+  let objectId;
   try {
-    const image = await Image.findOne({ imageUrl });
-
-    if (!image) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Image not found" });
-    }
-    const imagePath = path.join(__dirname, "uploads", image.filename);
-    fs.unlinkSync(imagePath);
-    await image.remove();
-
-    return res
-      .status(200)
-      .json({ success: true, message: "Image deleted successfully" });
+    objectId = new ObjectId(photoId);
   } catch (error) {
-    console.error("Error deleting image:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Failed to delete image" });
+    console.error("Invalid photoId:", error);
+    res.json({ success: false, error: "Invalid photoId" });
+    return;
   }
+
+  const collection = db.collection("photos");
+
+  collection
+    .deleteOne({ _id: objectId })
+    .then((result) => {
+      if (result.deletedCount === 1) {
+        res.json({ success: true, message: "Photo deleted successfully" });
+      } else {
+        res.json({ success: false, error: "Photo not found" });
+      }
+    })
+    .catch((error) => {
+      console.error("Error deleting photo:", error);
+      res.json({ success: false, error: "Failed to delete photo" });
+    });
 });
 
-app.post('/comments', (req, res) => {
+app.post("/comments", (req, res) => {
   const { user_id, photo_id, comment_text } = req.body;
 
   const newComment = new Comment({
     user_id,
     photo_id,
-    comment_text
+    comment_text,
   });
 
-  newComment.save()
+  newComment
+    .save()
     .then((comment) => {
-      console.log('Comment saved:', comment);
+      console.log("Comment saved:", comment);
       res.status(200).json({ success: true, comment });
     })
     .catch((error) => {
-      console.error('Error saving comment:', error);
-      res.status(500).json({ success: false, message: 'Internal Server Error' });
+      console.error("Error saving comment:", error);
+      res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error" });
     });
 });
 
-app.get('/comments', (req, res) => {
+app.get("/comments", (req, res) => {
   Comment.find()
     .then((comments) => {
       res.status(200).json({ success: true, comments });
     })
     .catch((error) => {
-      console.error('Error loading comments:', error);
-      res.status(500).json({ success: false, message: 'Internal Server Error' });
+      console.error("Error loading comments:", error);
+      res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error" });
     });
 });
 
-app.get('/signup', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'signup.html'));
-})
-app.get('/', function (req, res) {
-  res.render('home');
+app.get("/signup", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "signup.html"));
 });
-app.get('/signin', function (req, res) {
-  res.render('signin');
+app.get("/", function (req, res) {
+  res.render("home");
 });
-app.get('/signinasadmin', function (req, res) {
-  res.render('signinasadmin');
+app.get("/signin", function (req, res) {
+  res.render("signin");
 });
-app.get('/settings', function (req, res) {
-  res.render('settings');
+app.get("/signinasadmin", function (req, res) {
+  res.render("signinasadmin");
 });
-app.get('/profilepage', function (req, res) {
-  res.render('profile');
+app.get("/settings", function (req, res) {
+  res.render("settings");
 });
-app.get('/newpost', function (req, res) {
-  res.render('newpost');
+app.get("/profilepage", function (req, res) {
+  res.render("profile");
 });
-app.get('/signup', function (req, res) {
-  res.render('signup');
+app.get("/newpost", function (req, res) {
+  res.render("newpost");
+});
+app.get("/signup", function (req, res) {
+  res.render("signup");
 });
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
