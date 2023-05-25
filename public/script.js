@@ -15,6 +15,7 @@ $(function () {
           var description = formData.get("description");
           displayImage(imageUrl, description);
           clearForm();
+          alert("Image uploaded successfully");
         } else {
           console.error("Error uploading image.");
         }
@@ -25,7 +26,25 @@ $(function () {
     });
   });
 
-  // Function to handle comment submission
+
+  function displayImage(imageUrl, description) {
+    var imageElement = $("<div class='image'>")
+      .append($("<img>").attr("src", imageUrl))
+      .append($("<p>").text(description));
+
+    var commentForm = $("<form class='comment-form'>")
+      .append($("<input type='text' name='comment' style='margin-right: 10px;' placeholder='Leave a comment' required>"))
+      .append($("<input type='text' name='author' style='margin-right: 10px;' placeholder='Your name' required>"))
+      .append($("<button type='submit'>Submit</button>").on("click", function(event) {
+        event.preventDefault();
+        submitComment($(this).closest('.image'));
+      }));      
+
+    imageElement.append(commentForm);
+
+    $("#imageContainer").prepend(imageElement);
+  }
+
   function submitComment(imageElement) {
     var commentForm = imageElement.find(".comment-form");
     var comment = commentForm.find("input[name='comment']").val();
@@ -68,7 +87,7 @@ $(function () {
   function clearForm() {
     $("#uploadForm")[0].reset();
   }
-  
+
   // Load existing comments on page load
   $(window).on('load', function () {
     $.ajax({
@@ -95,3 +114,4 @@ $(function () {
   });
 
 });
+

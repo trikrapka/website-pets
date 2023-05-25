@@ -81,6 +81,22 @@ async function generateData() {
     await Admin.insertMany(admins);
     console.log('Generated 10 admins');
 
+
+    // Generate 100 comments
+    for(const photo of photos){
+      const comments = [];
+      for (let i = 0; i < 10; i++) {
+        const comment = new Comment({
+          content: faker.lorem.sentence(),
+          author: faker.name.firstName(),
+          photo_id: photo._id,
+        });
+        comments.push(comment);
+      }
+      await Comment.insertMany(comments);
+      console.log('Generated 10 comments');
+    }
+
     // Generate 10 photos
     const photos = [];
     for (let i = 0; i < 10; i++) {

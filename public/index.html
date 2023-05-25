@@ -28,6 +28,11 @@
                             var description = item.description;
                             var _id = item._id;
 
+
+                            var divId = document.createElement("div");
+                            divId.id = _id;
+
+
                             var divId = document.createElement("div");
                             divId.id = _id;
                             var image = $('<img>').attr('src', imageUrl);
@@ -35,10 +40,15 @@
 
                             var imageDiv = $('<div class="image">');
 
+                            imageDiv.append(image, descParagraph, divId);
+                            // imageDiv.append('<div id="">'+$id+'</div>');
+
+
                             imageDiv.append(image, descParagraph,divId);
                             // imageDiv.append('<div id="">'+$id+'</div>');
                             
                             var commentForm = $('<form class="comment-form">');
+
                             var commentInput = $('<input type="text" name="comment" placeholder="Leave a comment" required>');
                             var authorInput = $('<input type="text" name="author" placeholder="Your name" required>');
                             var submitButton = $('<button type="submit">Submit</button>');
@@ -77,6 +87,7 @@
 
 
                             commentForm.append(photo_id,commentInput, authorInput, submitButton);
+
                             imageDiv.append(commentForm);
 
 
@@ -92,14 +103,20 @@
                 });
             }
 
-
             loadGallery();
             getComments();
+            function displayImage(imageUrl, description, imageId) {
+                var imageElement = $("<div class='image'>").attr('data-id', imageId)
 
-            function displayImage(imageUrl, description) {
-                var imageElement = $("<div class='image'>")
                     .append($("<img>").attr("src", imageUrl))
                     .append($("<p>").text(description));
+
+                var deleteButton = $("<button type='submit-delete' class='delete-button'>Delete p</button>").on("click", function (event) {
+                    event.preventDefault();
+                    var imageId = getImageId($(this).closest('.image'));
+                    var imageElement = $(this).closest('.image');
+                    deleteImage(imageId, imageElement);
+                });
 
                 var commentForm = $("<form class='comment-form'>")
 
@@ -107,15 +124,48 @@
                     .append($("<input type='text' name='comment' style='margin-right: 10px;' placeholder='Leave a comment' required>"))
                     .append($("<input type='text' name='author'style='margin-right: 10px;' placeholder='Your name' required>"))
 
+
                     .append($("<button type='submit'>Submit</button>").on("click", function (event) {
                         event.preventDefault();
                         submitComment($(this).closest('.image'));
                     }));
 
-                imageElement.append(commentForm);
+                imageElement.append(commentForm).append(deleteButton);
 
                 $("#imageContainer").prepend(imageElement);
             }
+            function deleteImage(_id) {
+                $.ajax({
+                    url: "http://localhost:3000/gallery/" + _id,
+                    type: "DELETE",
+                    success: function (response) {
+                        if (response.success) {
+                            alert("Image deleted successfully");
+                        } else {
+                            console.error("Error deleting image.");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error:", error);
+                    },
+                });
+            }
+
+            $(document).on("click", ".delete-button", function (event) {
+                event.preventDefault();
+                var imageElement = $(this).closest('.image');
+                var imageId = imageElement.attr('data-id'); // Retrieve the `_id` from the attribute
+                deleteImage(imageId);
+            });
+
+
+            $(document).on("click", ".delete-button", function (event) {
+                event.preventDefault();
+                var imageElement = $(this).closest('.image');
+                var imageId = imageElement.data('id');
+                deleteImage(imageId);
+            });
+
 
 
             function submitComment(imageElement) {
@@ -185,9 +235,52 @@
                 });
             }
 
+            function getComments() {
+                $.ajax({
+                    url: 'http://localhost:3000/comments',
+                    method: 'GET',
+                    success: function (response) {
+
+                        var commentData = Array.isArray(response.comments) ? response.comments : Object.values(response.comments);
+
+                        commentData.forEach(function (item) {
+
+
+                            var content = item.content;
+                            var author = item.author;
+                            var photo_id = item.photo_id;
+                            var commentContainer = $('#' + photo_id);
+
+                            var comment = $('<p class="comment">').text(content);
+                            var authorParagraph = $('<p class="comment">').text(author);
+                            var id = $('<p>').text(photo_id);
+
+                            var commentDiv = $('<div class="comment">');
+                            commentDiv.append(comment, authorParagraph);
+
+                            commentContainer.append(commentDiv);
+                        });
+                    },
+                    error: function (error) {
+                        var commentContainer = $('#commentContainer');
+                        var comment = $('<p>').text('Error loading comments');
+                        console.error('Error loading comments:', error);
+                        commentContainer.append(comment);
+                    }
+                });
+            }
+
             function clearForm(form) {
                 form.find("input[type='text']").val("");
             }
+
+
+            $(document).on("click", "button[type='submit-delete']", function (event) {
+                event.preventDefault();
+                var imageId = $(this).closest('.image').attr('data-id');
+                var imageElement = $(this).closest('.image');
+                deleteImage(imageId, imageElement);
+            });
 
         });
     </script>
