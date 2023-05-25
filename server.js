@@ -12,7 +12,7 @@ const engine = require('ejs-locals');
 const app = express();
 const PORT = 3000;
 const MongoClient = require("mongodb").MongoClient;
-const uri = "mongodb://localhost:27017/db";
+const uri = "mongodb://127.0.0.1:27017/petsdb";
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -20,7 +20,7 @@ const client = new MongoClient(uri, {
 
 // Connect to MongoDB
 mongoose
-  .connect("mongodb://localhost:27017/db", {
+  .connect("mongodb://127.0.0.1:27017/petsdb", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   gender: { type: String },
   type: { type: String },
-  avatar: { type: String },
+  avatar: { type: String, default: 'avatar.png' },
 });
 
 const adminSchema = new mongoose.Schema({
@@ -53,10 +53,17 @@ const commentSchema = new mongoose.Schema({
   content: String,
   author: String,
 });
+const photoSchema = new mongoose.Schema({
+  imageUrl: { type: String, required: true },
+  description: { type: String },
+});
 
 const User = mongoose.model("User", userSchema);
 const Admin = mongoose.model("admins", adminSchema);
 const Comment = mongoose.model('comments', commentSchema);
+const Photo = mongoose.model("Photo", photoSchema);
+
+module.exports = Photo;
 
 const db = client.db();
 
