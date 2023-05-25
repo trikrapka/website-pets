@@ -7,6 +7,7 @@ const multer = require("multer");
 const session = require("express-session");
 const sharp = require("sharp");
 const fs = require("fs/promises");
+const engine = require('ejs-locals');
 
 const app = express();
 const PORT = 3000;
