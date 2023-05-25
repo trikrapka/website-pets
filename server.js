@@ -286,35 +286,6 @@ app.get("/gallery", (req, res) => {
     });
 });
 
-app.post("/signinadmin", async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    const admin = await Admin.findOne({ username });
-
-    if (!admin) {
-      return res
-        .status(401)
-        .json({ status: 401, message: "Invalid username or password" });
-    }
-
-    // Compare passwords without bcrypt
-    if (password !== admin.password) {
-      return res
-        .status(401)
-        .json({ status: 401, message: "Invalid username or password" });
-    }
-
-    req.session.adminId = admin.adminId;
-
-    res.status(200).json({ status: 200, message: "Login successful" });
-  } catch (error) {
-    console.error("Error occurred while signing in:", error);
-    res.status(500).json({ status: 500, message: "Internal Server Error" });
-  }
-});
-
-
-
 app.post("/comments", function (req, res) {
   var commentData = {
     content: req.body.content,
