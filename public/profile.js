@@ -89,7 +89,7 @@ $(function() {
       success: function(response) {
         // Display user's avatar
         if (response.avatar) {
-          $('#avatar-preview-image').attr('src', '/avatars/' + response.avatar);
+          $('#avatar-preview-image').attr('src', '/uploads/' + response.avatar);
         }
       },
       error: function() {

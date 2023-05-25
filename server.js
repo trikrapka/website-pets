@@ -130,6 +130,9 @@ app.post("/signup", async (req, res) => {
     });
 
     await newUser.save();
+
+    req.session.userId = newUser.userId;
+
     res.status(200).json({ status: 200, message: "Sign-up successful" });
   } catch (error) {
     console.error("Error occurred while saving user:", error);
@@ -231,15 +234,13 @@ app.post("/avatars", upload.single("avatar"), async (req, res) => {
     await fs.writeFile(resizedAvatarFilePath, buffer);
 
     const avatarFileName = `resized_${req.file.filename}`;
-    const userId = req.body.userId;
+    const userId = req.session.userId;
 
     const updatedUser = await User.findOneAndUpdate(
       { userId: userId },
       { avatar: avatarFileName },
       { new: true }
     );
-
-    req.session.body = updatedUser;
 
     await fs.unlink(avatarFilePath);
 
