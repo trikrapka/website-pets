@@ -254,7 +254,7 @@ app.use("/uploads", express.static("uploads"));
 
 app.post("/gallery", upload.single("image"), (req, res) => {
   const { description } = req.body;
-  const imagePath = req.file.path;
+  const imagePaths = req.file.path;
   const imageUrl = "/uploads/" + req.file.filename;
 
   const collection = db.collection("photos");
