@@ -32,7 +32,7 @@ mongoose
 
 const userSchema = new mongoose.Schema({
   userId: { type: String, required: true, unique: true },
-  username: { type: String, required: true },
+  typeofpet: { type: String, required: true },
   name: { type: String, required: true },
   breed: { type: String, required: true },
   email: { type: String, required: true, unique: true },
@@ -88,11 +88,11 @@ const upload = multer({ storage: storage });
 
 app.post("/signup", async (req, res) => {
   try {
-    const { username, name, breed, email, password, repeatPassword, avatar } =
+    const { typeofpet, name, breed, email, password, repeatPassword, avatar } =
       req.body;
 
     if (
-      !username ||
+      !typeofpet ||
       !name ||
       !breed ||
       !email ||
@@ -121,7 +121,7 @@ app.post("/signup", async (req, res) => {
 
     const newUser = new User({
       userId: new mongoose.Types.ObjectId().toString(),
-      username,
+      typeofpet,
       name,
       breed,
       email,
@@ -196,24 +196,26 @@ app.post("/profile", async (req, res) => {
     res.status(500).json({ status: 500, message: "Internal Server Error" });
   }
 });
-app.use(express.static("uploads"));
-app.get("/avatars/filename", (req, res) => {
-  const userId = req.session.userId;
 
-  User.findOne({ email })
-    .then((user) => {
-      if (!user) {
-        return res.status(404).json({ status: 404, message: "User not found" });
-      }
+app.get("/avatars/filename", async (req, res) => {
+  try {
+    const userId = req.session.userId;
+    const user = await User.findOne({ userId });
 
-      const avatarFileName = user.avatar;
-      res.json({ avatar: avatarFileName });
-    })
-    .catch((error) => {
-      console.error("Error occurred while retrieving user data:", error);
-      res.status(500).json({ status: 500, message: "Internal Server Error" });
-    });
+    if (!user) {
+      return res.status(404).json({ status: 404, message: "User not found" });
+    }
+
+    const avatarFileName = user.avatar;
+    res.json({ avatar: avatarFileName });
+  } catch (error) {
+    console.error("Error occurred while retrieving user data:", error);
+    res.status(500).json({ status: 500, message: "Internal Server Error" });
+  }
 });
+
+app.use(express.static("uploads"));
+
 
 
 app.post("/avatars", upload.single("avatar"), async (req, res) => {
@@ -229,10 +231,10 @@ app.post("/avatars", upload.single("avatar"), async (req, res) => {
     await fs.writeFile(resizedAvatarFilePath, buffer);
 
     const avatarFileName = `resized_${req.file.filename}`;
-    const userEmail = req.body.email;
+    const userId = req.body.userId;
 
     const updatedUser = await User.findOneAndUpdate(
-      { email: userEmail },
+      { userId: userId },
       { avatar: avatarFileName },
       { new: true }
     );
@@ -285,7 +287,7 @@ app.get("/gallery", (req, res) => {
 
 app.post("/signinadmin", async (req, res) => {
   try {
-    const { username, password } = req.path;
+    const { username, password } = req.body;
     const admin = await Admin.findOne({ username });
 
     if (!admin) {
@@ -294,9 +296,8 @@ app.post("/signinadmin", async (req, res) => {
         .json({ status: 401, message: "Invalid username or password" });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, admin.password);
-
-    if (!isPasswordValid) {
+    // Compare passwords without bcrypt
+    if (password !== admin.password) {
       return res
         .status(401)
         .json({ status: 401, message: "Invalid username or password" });
@@ -310,6 +311,8 @@ app.post("/signinadmin", async (req, res) => {
     res.status(500).json({ status: 500, message: "Internal Server Error" });
   }
 });
+
+
 
 app.post("/comments", function (req, res) {
   var commentData = {

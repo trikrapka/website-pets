@@ -1,5 +1,5 @@
 $(function() {
-  $(document).on('submit', '#admin-login-form', function(event) {
+  $(document).on('submit', function(event) {
       event.preventDefault();
 
       var formData = {

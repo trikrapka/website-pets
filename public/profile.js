@@ -73,7 +73,6 @@ $(function() {
       };
 
       fetch('http://localhost:3000/avatars', requestOptions)
-        .then(response => response.json())
         .then(data => {
           alert('Avatar saved successfully');
         })
