@@ -22,6 +22,7 @@ const adminSchema = new mongoose.Schema({
 const commentSchema = new mongoose.Schema({
   content: String,
   author: String,
+  photo_id: String,
 });
 const photoSchema = new mongoose.Schema({
   imageUrl: { type: String, required: true },
@@ -80,18 +81,6 @@ async function generateData() {
     await Admin.insertMany(admins);
     console.log('Generated 10 admins');
 
-    // Generate 100 comments
-    const comments = [];
-    for (let i = 0; i < 100; i++) {
-      const comment = new Comment({
-        content: faker.lorem.sentence(),
-        author: faker.name.firstName(),
-      });
-      comments.push(comment);
-    }
-    await Comment.insertMany(comments);
-    console.log('Generated 100 comments');
-
     // Generate 10 photos
     const photos = [];
     for (let i = 0; i < 10; i++) {
@@ -103,7 +92,20 @@ async function generateData() {
     }
     await Photo.insertMany(photos);
     console.log('Generated 10 photos');
-
+    // Generate 100 comments
+    for(const photo of photos){
+      const comments = [];
+      for (let i = 0; i < 10; i++) {
+        const comment = new Comment({
+          content: faker.lorem.sentence(),
+          author: faker.name.firstName(),
+          photo_id: photo._id,
+        });
+        comments.push(comment);
+      }
+      await Comment.insertMany(comments);
+      console.log('Generated 10 comments');
+    }
     // Disconnect from MongoDB
     mongoose.disconnect();
     console.log('Disconnected from MongoDB');
