@@ -19,7 +19,7 @@ app.use(express.static('public'));
 
 const PORT = 3000;
 const MongoClient = require("mongodb").MongoClient;
-const uri = "mongodb://localhost:27017/db";
+const uri = "mongodb://127.0.0.1:27017/petsdb";
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -27,7 +27,7 @@ const client = new MongoClient(uri, {
 
 // Connect to MongoDB
 mongoose
-  .connect("mongodb://localhost:27017/db", {
+  .connect("mongodb://127.0.0.1:27017/petsdb", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -57,9 +57,11 @@ const adminSchema = new mongoose.Schema({
 });
 
 const commentSchema = new mongoose.Schema({
-  userId: String,
-  photoId: String,
-  comment_text: String,
+
+  content: String,
+  author: String,
+  photo_id: String,
+
 });
 
 const User = mongoose.model("User", userSchema);
@@ -360,12 +362,12 @@ app.delete("/gallery", async (req, res) => {
 });
 
 app.post('/comments', (req, res) => {
-  const { user_id, photo_id, comment_text } = req.body;
+  const { author, photo_id, content } = req.body;
 
   const newComment = new Comment({
-    user_id,
+    author,
     photo_id,
-    comment_text
+    content
   });
 
   newComment.save()

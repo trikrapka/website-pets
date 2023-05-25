@@ -285,6 +285,12 @@ button.btn-submit:hover {
   margin-top: 50vh;
 }
 
+.comment{
+  font-size: 20px;
+  display: flex;
+  justify-content: left;
+  align-items: left;
+}
 .avatar-input {
   display: block;
   width: 150px;
