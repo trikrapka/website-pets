@@ -7,11 +7,19 @@ const multer = require("multer");
 const session = require("express-session");
 const sharp = require("sharp");
 const fs = require("fs/promises");
+const engine = require('ejs-locals');
 
 const app = express();
+//using ejs for ease
+app.set('view engine', 'ejs');
+app.engine('ejs', engine);
+//taking input from HTML, setting paths to files to app.js
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public'));
+
 const PORT = 3000;
 const MongoClient = require("mongodb").MongoClient;
-const uri = "mongodb://localhost:27017/db";
+const uri = "mongodb://127.0.0.1:27017/petsdb";
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -19,7 +27,7 @@ const client = new MongoClient(uri, {
 
 // Connect to MongoDB
 mongoose
-  .connect("mongodb://localhost:27017/db", {
+  .connect("mongodb://127.0.0.1:27017/petsdb", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -381,6 +389,27 @@ app.post('/comments', (req, res) => {
       console.error('Error saving comment:', error);
       res.status(500).json({ success: false, message: 'Internal Server Error' });
     });
+});
+app.get('/', function (req, res) {
+  res.render('home');
+});
+app.get('/signin', function (req, res) {
+  res.render('signin');
+});
+app.get('/signinasadmin', function (req, res) {
+  res.render('signinasadmin');
+});
+app.get('/settings', function (req, res) {
+  res.render('settings');
+});
+app.get('/profilepage', function (req, res) {
+  res.render('profile');
+});
+app.get('/newpost', function (req, res) {
+  res.render('newpost');
+});
+app.get('/signup', function (req, res) {
+  res.render('signup');
 });
 
 app.listen(PORT, () => {
