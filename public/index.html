@@ -46,7 +46,13 @@
 
                             imageDiv.append(image, descParagraph,divId);
                             // imageDiv.append('<div id="">'+$id+'</div>');
-                            
+                            if (localStorage.getItem('isLoggedInAdmin') === 'true') {
+                                var deleteButton = $('<button type="submit-delete" class="delete-button"> Delete post </button>');
+                            } 
+                            else if (localStorage.getItem('isLoggedInAdmin') === 'false') {
+                                var deleteButton = $('<button type="submit-delete" class="delete-button" style="display: none;"> Delete post </button>');
+                            }
+                            deleteButton.appendTo(imageDiv);
                             var commentForm = $('<form class="comment-form">');
 
                             var commentInput = $('<input type="text" name="comment" placeholder="Leave a comment" required>');
