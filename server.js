@@ -10,6 +10,13 @@ const fs = require("fs/promises");
 const engine = require('ejs-locals');
 
 const app = express();
+//using ejs for ease
+app.set('view engine', 'ejs');
+app.engine('ejs', engine);
+//taking input from HTML, setting paths to files to app.js
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public'));
+
 const PORT = 3000;
 const MongoClient = require("mongodb").MongoClient;
 const uri = "mongodb://127.0.0.1:27017/petsdb";
