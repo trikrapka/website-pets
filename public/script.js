@@ -15,6 +15,7 @@ $(function () {
           var description = formData.get("description");
           displayImage(imageUrl, description);
           clearForm();
+          alert("Image uploaded successfully");
         } else {
           console.error("Error uploading image.");
         }

@@ -45,7 +45,7 @@
                             var submitButton = $('<button class="btn-submit" type="submit">Submit</button>');
                             if (localStorage.getItem('isLoggedInAdmin') === 'true') {
                                 var deleteButton = $('<button type="submit-delete" class="delete-button"> Delete post </button>');
-                            } 
+                            }
                             else if (localStorage.getItem('isLoggedInAdmin') === 'false') {
                                 var deleteButton = $('<button type="submit-delete" class="delete-button" style="display: none;"> Delete post </button>');
                             }
@@ -61,7 +61,6 @@
                     }
                 });
             }
-
             loadGallery();
             getComments();
             function displayImage(imageUrl, description, imageId) {
@@ -87,22 +86,37 @@
 
                 $("#imageContainer").prepend(imageElement);
             }
-            function deleteImage(imageUrl, imageElement) {
+            function deleteImage(_id) {
                 $.ajax({
-                    url: "http://localhost:3000/gallery/" + imageUrl, // Pass imageUrl as the id parameter
+                    url: "http://localhost:3000/gallery/" + _id,
                     type: "DELETE",
                     success: function (response) {
                         if (response.success) {
-                            imageElement.remove();
+                            alert("Image deleted successfully");
                         } else {
                             console.error("Error deleting image.");
                         }
                     },
                     error: function (xhr, status, error) {
                         console.error("Error:", error);
-                    }
+                    },
                 });
             }
+
+            $(document).on("click", ".delete-button", function (event) {
+                event.preventDefault();
+                var imageElement = $(this).closest('.image');
+                var imageId = imageElement.attr('data-id'); // Retrieve the `_id` from the attribute
+                deleteImage(imageId);
+            });
+
+
+            $(document).on("click", ".delete-button", function (event) {
+                event.preventDefault();
+                var imageElement = $(this).closest('.image');
+                var imageId = imageElement.data('id');
+                deleteImage(imageId);
+            });
 
 
             function submitComment(imageElement) {

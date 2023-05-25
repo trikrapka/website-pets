@@ -63,13 +63,14 @@ const commentSchema = new mongoose.Schema({
 });
 
 const photosSchema = new mongoose.Schema({
-  imageUrl: { type: String },
+  ObjectId: { type: String },
   description: { type: String },
 });
 
 const User = mongoose.model("User", userSchema);
 const Admin = mongoose.model("admins", adminSchema);
 const Comment = mongoose.model("comments", commentSchema);
+const Photo = mongoose.model("photos", commentSchema);
 
 const db = client.db();
 
@@ -330,12 +331,16 @@ app.get("/gallery", (req, res) => {
 });
 
 const { ObjectId } = require("mongodb");
+
 app.delete("/gallery/:id", (req, res) => {
-  const photoId = req.params.id;
+  const photoId = Photo.findOne({ ObjectId });
+
+  console.log("Received DELETE request for photoId:", photoId);
 
   let objectId;
   try {
     objectId = new ObjectId(photoId);
+    console.log("ObjectId:", objectId);
   } catch (error) {
     console.error("Invalid photoId:", error);
     res.json({ success: false, error: "Invalid photoId" });
@@ -348,8 +353,10 @@ app.delete("/gallery/:id", (req, res) => {
     .deleteOne({ _id: objectId })
     .then((result) => {
       if (result.deletedCount === 1) {
+        console.log("Photo deleted successfully");
         res.json({ success: true, message: "Photo deleted successfully" });
       } else {
+        console.log("Photo not found");
         res.json({ success: false, error: "Photo not found" });
       }
     })
@@ -358,6 +365,7 @@ app.delete("/gallery/:id", (req, res) => {
       res.json({ success: false, error: "Failed to delete photo" });
     });
 });
+
 
 app.post("/comments", (req, res) => {
   const { user_id, photo_id, comment_text } = req.body;
