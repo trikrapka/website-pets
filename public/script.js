@@ -31,12 +31,12 @@ $(function () {
       .append($("<p>").text(description));
 
     var commentForm = $("<form class='comment-form'>")
-      .append($("<input type='text' name='comment' placeholder='Leave a comment' required>"))
-      .append($("<input type='text' name='author' placeholder='Your name' required>"))
+      .append($("<input type='text' name='comment' style='margin-right: 10px;' placeholder='Leave a comment' required>"))
+      .append($("<input type='text' name='author' style='margin-right: 10px;' placeholder='Your name' required>"))
       .append($("<button type='submit'>Submit</button>").on("click", function(event) {
         event.preventDefault();
         submitComment($(this).closest('.image'));
-      }));
+      }));      
 
     imageElement.append(commentForm);
 
