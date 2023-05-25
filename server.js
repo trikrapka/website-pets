@@ -50,13 +50,14 @@ const adminSchema = new mongoose.Schema({
 });
 
 const commentSchema = new mongoose.Schema({
-  content: String,
-  author: String,
+  userId: String,
+  photoId: String,
+  comment_text: String,
 });
 
 const User = mongoose.model("User", userSchema);
 const Admin = mongoose.model("admins", adminSchema);
-const Comment = mongoose.model('comments', commentSchema);
+const Comment = mongoose.model('comment', commentSchema);
 
 const db = client.db();
 

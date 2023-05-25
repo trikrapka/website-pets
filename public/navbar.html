@@ -1,6 +1,6 @@
 <script>
 $(function() {
-if (localStorage.getItem('isLoggedIn') === 'true') {
+if (localStorage.getItem('isLoggedIn') === 'true' || (localStorage.getItem('isLoggedInAdmin') === 'true')) {
     document.getElementById('newButton').disabled = false;
     document.getElementById('profileButton').disabled = false;
     document.getElementById('signInButton').disabled = true;
@@ -15,7 +15,7 @@ if (localStorage.getItem('isLoggedIn') === 'true') {
 
 const adminHeading = document.getElementById("admin-heading");
 
-if (isLoggedInAdmin) {
+if (localStorage.getItem('isLoggedInAdmin') === 'true') {
   adminHeading.style.display = "block";
 } else {
   adminHeading.style.display = "none";
