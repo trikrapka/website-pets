@@ -56,7 +56,7 @@ const commentSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 const Admin = mongoose.model("admins", adminSchema);
-const Comment = mongoose.model('Comment', commentSchema);
+const Comment = mongoose.model('comments', commentSchema);
 
 const db = client.db();
 
@@ -352,11 +352,12 @@ app.delete("/gallery", async (req, res) => {
 });
 
 app.post('/comments', (req, res) => {
-  const { content, author } = req.body;
+  const { user_id, photo_id, comment_text } = req.body;
 
   const newComment = new Comment({
-    content,
-    author,
+    user_id,
+    photo_id,
+    comment_text
   });
 
   newComment.save()
