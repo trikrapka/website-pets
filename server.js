@@ -392,7 +392,27 @@ app.get('/comments', (req, res) => {
 app.get('/signup', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'signup.html'));
 })
-
+app.get('/', function (req, res) {
+  res.render('home');
+});
+app.get('/signin', function (req, res) {
+  res.render('signin');
+});
+app.get('/signinasadmin', function (req, res) {
+  res.render('signinasadmin');
+});
+app.get('/settings', function (req, res) {
+  res.render('settings');
+});
+app.get('/profilepage', function (req, res) {
+  res.render('profile');
+});
+app.get('/newpost', function (req, res) {
+  res.render('newpost');
+});
+app.get('/signup', function (req, res) {
+  res.render('signup');
+});
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
