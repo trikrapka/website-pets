@@ -57,9 +57,11 @@ const adminSchema = new mongoose.Schema({
 });
 
 const commentSchema = new mongoose.Schema({
+
   content: String,
   author: String,
   photo_id: String,
+
 });
 
 const User = mongoose.model("User", userSchema);

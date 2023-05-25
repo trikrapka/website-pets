@@ -34,6 +34,7 @@
                             var descParagraph = $('<p>').text(description);
 
                             var imageDiv = $('<div class="image">');
+
                             imageDiv.append(image, descParagraph,divId);
                             // imageDiv.append('<div id="">'+$id+'</div>');
                             
@@ -78,6 +79,7 @@
                             commentForm.append(photo_id,commentInput, authorInput, submitButton);
                             imageDiv.append(commentForm);
 
+
                             imageContainer.append(imageDiv);
 
                             // Add comment container after image container
@@ -100,9 +102,11 @@
                     .append($("<p>").text(description));
 
                 var commentForm = $("<form class='comment-form'>")
+
                     .append($("<input type='text' name='photo_id' style='margin-right: 10px;' placeholder='Leave a comment' required> "))
                     .append($("<input type='text' name='comment' style='margin-right: 10px;' placeholder='Leave a comment' required>"))
                     .append($("<input type='text' name='author'style='margin-right: 10px;' placeholder='Your name' required>"))
+
                     .append($("<button type='submit'>Submit</button>").on("click", function (event) {
                         event.preventDefault();
                         submitComment($(this).closest('.image'));
@@ -112,6 +116,7 @@
 
                 $("#imageContainer").prepend(imageElement);
             }
+
 
             function submitComment(imageElement) {
                 var commentForm = imageElement.find('.comment-form');
@@ -183,8 +188,8 @@
             function clearForm(form) {
                 form.find("input[type='text']").val("");
             }
-        });
 
+        });
     </script>
 </head>
 
