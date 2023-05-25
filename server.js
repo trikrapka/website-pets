@@ -55,7 +55,7 @@ const commentSchema = new mongoose.Schema({
 });
 
 const User = mongoose.model("User", userSchema);
-const Admin = mongoose.model("Admin", adminSchema);
+const Admin = mongoose.model("admins", adminSchema);
 const Comment = mongoose.model('Comment', commentSchema);
 
 const db = client.db();
@@ -73,7 +73,12 @@ app.use(
 );
 app.use("/public", express.static("public"));
 app.use("/uploads", express.static("uploads")); 
-
+//using ejs for ease
+app.set('view engine', 'ejs');
+app.engine('ejs', engine);
+//taking input from HTML, setting paths to files to app.js
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public'));
 
 // Multer configuration
 const storage = multer.diskStorage({
@@ -162,6 +167,33 @@ app.post("/signin", async (req, res) => {
 
     // user ID sessin
     req.session.userId = user.userId;
+
+    res.status(200).json({ status: 200, message: "Login successful" });
+  } catch (error) {
+    console.error("Error occurred while signing in:", error);
+    res.status(500).json({ status: 500, message: "Internal Server Error" });
+  }
+});
+
+app.post("/signinadmin", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const admin = await Admin.findOne({ username });
+
+    if (!admin) {
+      return res
+        .status(401)
+        .json({ status: 401, message: "Invalid username or password" });
+    }
+
+    // Compare passwords without bcrypt
+    if (password !== admin.password) {
+      return res
+        .status(401)
+        .json({ status: 401, message: "Invalid username or password" });
+    }
+
+    req.session.adminId = admin.adminId;
 
     res.status(200).json({ status: 200, message: "Login successful" });
   } catch (error) {
